@@ -39,6 +39,14 @@ Artista.init(
       type: DataTypes.STRING(100),
       allowNull: false,
     },
+    generos_musicais: {
+      type: DataTypes.STRING(200),
+      allowNull: true,
+    },
+    url_imagem: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
   },
   {
     sequelize: pgSequelize,

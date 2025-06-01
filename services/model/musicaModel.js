@@ -31,6 +31,10 @@ Musica.init(
       type: DataTypes.STRING(200),
       allowNull: false,
     },
+    duracao: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
   {
     sequelize: pgSequelize,

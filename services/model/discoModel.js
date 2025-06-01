@@ -52,6 +52,10 @@ Disco.init(
       allowNull: false,
       references: { model: "produtor", key: "cod_produtor" },
     },
+    url_imagem: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
   },
   {
     sequelize: pgSequelize,

@@ -1,4 +1,4 @@
-import db from "./index.js";
+import db from "../model/index.js";
 
 try {
   await db.pgSequelize.sync({ force: true });
