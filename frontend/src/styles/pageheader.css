@@ -1,0 +1,50 @@
+.main-page-header {
+  background-color: #000000;
+  height: 100%;
+  padding: 0 300px;
+  z-index: 3;
+  opacity: 0.95;
+  position: sticky;
+  top: 0;
+  right: 0;
+
+  border-bottom: 1px solid rgb(75, 75, 75);
+  box-shadow: 1px 1px 8px #1b1b1bbe;
+
+  .ant-menu-dark {
+    background-color: #000000;
+  }
+
+  .demo-logo {
+    width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav-wrapper {
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    .ant-menu-title-content {
+      font-weight: 600;
+      color: white;
+      font-size: 16px;
+      padding: 10px;
+    }
+
+    .ant-menu-item-selected,
+    .ant-menu-item-selected:hover {
+      background-color: transparent;
+    }
+
+    .ant-menu-title-content:hover {
+      background-color: #1f1f1f7e;
+      padding: 10px;
+      border-radius: 8px;
+      transition: 0.4s ease-in-out;
+    }
+  }
+
+
+}
