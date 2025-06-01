@@ -1,30 +1,58 @@
-export default class Musico {
-  constructor(nro_registro, id_artista, id_localizacao) {
-    if (!nro_registro || nro_registro.trim() === "")
-      throw new Error("O campo nro_registro é obrigatório.");
+import { DataTypes, Model } from "sequelize";
+import { pgSequelize } from "../database/db.js";
 
-    if (id_artista === null || id_artista === undefined || id_artista === "")
-      throw new Error("Invalid id_artista.");
+class Musico extends Model {
+  static associate(models) {
+    Musico.belongsTo(models.Artista, {
+      foreignKey: "id_artista",
+      as: "artista",
+    });
 
-    if (
-      id_localizacao === null ||
-      id_localizacao === undefined ||
-      id_localizacao === ""
-    )
-      throw new Error("Invalid id_localizacao.");
+    Musico.belongsTo(models.Localizacao, {
+      foreignKey: "id_localizacao",
+      as: "localizacao",
+    });
 
-    this._nro_registro = nro_registro;
-    this._id_artista = id_artista;
-    this._id_localizacao = id_localizacao;
-  }
+    Musico.belongsToMany(models.Banda, {
+      through: models.MusicoPertenceBanda,
+      foreignKey: "nro_registro",
+      otherKey: "cod_banda",
+      as: "bandas",
+    });
 
-  get nro_registro() {
-    return this._nro_registro;
-  }
-  get id_artista() {
-    return this._id_artista;
-  }
-  get id_localizacao() {
-    return this._id_localizacao;
+    Musico.belongsToMany(models.Instrumento, {
+      through: models.MusicoTocaInstrumento,
+      foreignKey: "nro_registro",
+      otherKey: "cod_instrumento",
+      as: "instrumentos",
+    });
   }
 }
+
+Musico.init(
+  {
+    nro_registro: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      primaryKey: true,
+    },
+    id_artista: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: { model: "artista", key: "id_artista" },
+    },
+    id_localizacao: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: { model: "localizacao", key: "id_localizacao" },
+    },
+  },
+  {
+    sequelize: pgSequelize,
+    modelName: "Musico",
+    tableName: "musico",
+    timestamps: false,
+  }
+);
+
+export default Musico;

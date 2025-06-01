@@ -1,19 +1,31 @@
-export default class ArtistaParticipaMusica {
-  constructor(id_artista, cod_musica) {
-    if (id_artista === null || id_artista === undefined || id_artista === "")
-      throw new Error("Invalid id_artista.");
+import { DataTypes, Model } from "sequelize";
+import { pgSequelize } from "../database/db.js";
 
-    if (cod_musica === null || cod_musica === undefined || cod_musica === "")
-      throw new Error("Invalid cod_musica.");
-
-    this._id_artista = id_artista;
-    this._cod_musica = cod_musica;
-  }
-
-  get id_artista() {
-    return this._id_artista;
-  }
-  get cod_musica() {
-    return this._cod_musica;
-  }
+class ArtistaParticipaMusica extends Model {
+  static associate(models) {}
 }
+
+ArtistaParticipaMusica.init(
+  {
+    id_artista: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      references: { model: "artista", key: "id_artista" },
+    },
+    cod_musica: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      references: { model: "musica", key: "cod_musica" },
+    },
+  },
+  {
+    sequelize: pgSequelize,
+    modelName: "ArtistaParticipaMusica",
+    tableName: "artista_participa_musica",
+    timestamps: false,
+  }
+);
+
+export default ArtistaParticipaMusica;

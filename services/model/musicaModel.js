@@ -1,19 +1,42 @@
-export default class Musica {
-  constructor(cod_musica, titulo) {
-    if (cod_musica === null || cod_musica === undefined || cod_musica === "")
-      throw new Error("Invalid cod_musica.");
+import { DataTypes, Model } from "sequelize";
+import { pgSequelize } from "../database/db.js";
 
-    if (!titulo || titulo.trim() === "")
-      throw new Error("O campo titulo é obrigatório.");
+class Musica extends Model {
+  static associate(models) {
+    Musica.belongsToMany(models.Artista, {
+      through: models.ArtistaParticipaMusica,
+      foreignKey: "cod_musica",
+      otherKey: "id_artista",
+      as: "artistas",
+    });
 
-    this._cod_musica = cod_musica;
-    this._titulo = titulo;
-  }
-
-  get cod_musica() {
-    return this._cod_musica;
-  }
-  get titulo() {
-    return this._titulo;
+    Musica.belongsToMany(models.Disco, {
+      through: models.DiscoContemMusica,
+      foreignKey: "cod_musica",
+      otherKey: "cod_disco",
+      as: "discos",
+    });
   }
 }
+
+Musica.init(
+  {
+    cod_musica: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    titulo: {
+      type: DataTypes.STRING(200),
+      allowNull: false,
+    },
+  },
+  {
+    sequelize: pgSequelize,
+    modelName: "Musica",
+    tableName: "musica",
+    timestamps: false,
+  }
+);
+
+export default Musica;

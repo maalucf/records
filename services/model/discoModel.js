@@ -1,51 +1,63 @@
-export default class Disco {
-  constructor(cod_disco, titulo, formato, data, id_artista, cod_produtor) {
-    if (cod_disco === null || cod_disco === undefined || cod_disco === "")
-      throw new Error("Invalid cod_disco.");
+import { DataTypes, Model } from "sequelize";
+import { pgSequelize } from "../database/db.js";
 
-    if (!titulo || titulo.trim() === "")
-      throw new Error("O campo titulo é obrigatório.");
+class Disco extends Model {
+  static associate(models) {
+    Disco.belongsTo(models.Artista, {
+      foreignKey: "id_artista",
+      as: "artista",
+    });
 
-    if (!formato || formato.trim() === "")
-      throw new Error("O campo formato é obrigatório.");
+    Disco.belongsTo(models.Produtor, {
+      foreignKey: "cod_produtor",
+      as: "produtor",
+    });
 
-    if (!data || !(data instanceof Date))
-      throw new Error("O campo data precisa ser um objeto Date válido.");
-
-    if (id_artista === null || id_artista === undefined || id_artista === "")
-      throw new Error("Invalid id_artista.");
-
-    if (
-      cod_produtor === null ||
-      cod_produtor === undefined ||
-      cod_produtor === ""
-    )
-      throw new Error("Invalid cod_produtor.");
-
-    this._cod_disco = cod_disco;
-    this._titulo = titulo;
-    this._formato = formato;
-    this._data = data;
-    this._id_artista = id_artista;
-    this._cod_produtor = cod_produtor;
-  }
-
-  get cod_disco() {
-    return this._cod_disco;
-  }
-  get titulo() {
-    return this._titulo;
-  }
-  get formato() {
-    return this._formato;
-  }
-  get data() {
-    return this._data;
-  }
-  get id_artista() {
-    return this._id_artista;
-  }
-  get cod_produtor() {
-    return this._cod_produtor;
+    Disco.belongsToMany(models.Musica, {
+      through: models.DiscoContemMusica,
+      foreignKey: "cod_disco",
+      otherKey: "cod_musica",
+      as: "musicas",
+    });
   }
 }
+
+Disco.init(
+  {
+    cod_disco: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    titulo: {
+      type: DataTypes.STRING(200),
+      allowNull: false,
+    },
+    formato: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+    },
+    data: {
+      type: DataTypes.DATEONLY,
+      allowNull: false,
+    },
+    id_artista: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: { model: "artista", key: "id_artista" },
+    },
+    cod_produtor: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: { model: "produtor", key: "cod_produtor" },
+    },
+  },
+  {
+    sequelize: pgSequelize,
+    modelName: "Disco",
+    tableName: "disco",
+    timestamps: false,
+  }
+);
+
+export default Disco;

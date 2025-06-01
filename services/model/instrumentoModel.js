@@ -1,23 +1,36 @@
-export default class Instrumento {
-  constructor(cod_instrumento, nome) {
-    if (
-      cod_instrumento === null ||
-      cod_instrumento === undefined ||
-      cod_instrumento === ""
-    )
-      throw new Error("Invalid cod_instrumento.");
+import { DataTypes, Model } from "sequelize";
+import { pgSequelize } from "../database/db.js";
 
-    if (!nome || nome.trim() === "")
-      throw new Error("O campo nome é obrigatório.");
-
-    this._cod_instrumento = cod_instrumento;
-    this._nome = nome;
-  }
-
-  get cod_instrumento() {
-    return this._cod_instrumento;
-  }
-  get nome() {
-    return this._nome;
+class Instrumento extends Model {
+  static associate(models) {
+    Instrumento.belongsToMany(models.Musico, {
+      through: models.MusicoTocaInstrumento,
+      foreignKey: "cod_instrumento",
+      otherKey: "nro_registro",
+      as: "musicos",
+    });
   }
 }
+
+Instrumento.init(
+  {
+    cod_instrumento: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    nome: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      unique: true,
+    },
+  },
+  {
+    sequelize: pgSequelize,
+    modelName: "Instrumento",
+    tableName: "instrumento",
+    timestamps: false,
+  }
+);
+
+export default Instrumento;

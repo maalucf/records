@@ -1,30 +1,38 @@
-export default class Localizacao {
-  constructor(id_localizacao, telefone, endereco) {
-    if (
-      id_localizacao === null ||
-      id_localizacao === undefined ||
-      id_localizacao === ""
-    )
-      throw new Error("Invalid id_localizacao.");
+import { DataTypes, Model } from "sequelize";
+import { pgSequelize } from "../database/db.js";
 
-    if (!telefone || telefone.trim() === "")
-      throw new Error("O campo telefone é obrigatório.");
-
-    if (!endereco || endereco.trim() === "")
-      throw new Error("O campo endereco é obrigatório.");
-
-    this._id_localizacao = id_localizacao;
-    this._telefone = telefone;
-    this._endereco = endereco;
-  }
-
-  get id_localizacao() {
-    return this._id_localizacao;
-  }
-  get telefone() {
-    return this._telefone;
-  }
-  get endereco() {
-    return this._endereco;
+class Localizacao extends Model {
+  static associate(models) {
+    Localizacao.hasMany(models.Musico, {
+      foreignKey: "id_localizacao",
+      as: "musicos",
+    });
   }
 }
+
+Localizacao.init(
+  {
+    id_localizacao: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    telefone: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+    },
+    endereco: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      unique: true,
+    },
+  },
+  {
+    sequelize: pgSequelize,
+    modelName: "Localizacao",
+    tableName: "localizacao",
+    timestamps: false,
+  }
+);
+
+export default Localizacao;

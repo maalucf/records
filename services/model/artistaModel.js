@@ -1,19 +1,50 @@
-export default class Artista {
-  constructor(id_artista, nome) {
-    if (id_artista === null || id_artista === undefined || id_artista === "")
-      throw new Error("Invalid id_artista.");
+import { DataTypes, Model } from "sequelize";
+import { pgSequelize } from "../database/db.js";
 
-    if (!nome || nome.trim() === "")
-      throw new Error("O campo nome é obrigatório.");
+class Artista extends Model {
+  static associate(models) {
+    Artista.hasMany(models.Musico, {
+      foreignKey: "id_artista",
+      as: "musicos",
+    });
 
-    this._id_artista = id_artista;
-    this._nome = nome;
-  }
+    Artista.hasMany(models.Banda, {
+      foreignKey: "id_artista",
+      as: "bandas",
+    });
 
-  get id_artista() {
-    return this._id_artista;
-  }
-  get nome() {
-    return this._nome;
+    Artista.hasMany(models.Disco, {
+      foreignKey: "id_artista",
+      as: "discos",
+    });
+
+    Artista.belongsToMany(models.Musica, {
+      through: models.ArtistaParticipaMusica,
+      foreignKey: "id_artista",
+      otherKey: "cod_musica",
+      as: "musicas",
+    });
   }
 }
+
+Artista.init(
+  {
+    id_artista: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    nome: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+    },
+  },
+  {
+    sequelize: pgSequelize,
+    modelName: "Artista",
+    tableName: "artista",
+    timestamps: false,
+  }
+);
+
+export default Artista;

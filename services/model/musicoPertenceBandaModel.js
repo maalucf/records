@@ -1,19 +1,31 @@
-export default class MusicoPertenceBanda {
-  constructor(nro_registro, cod_banda) {
-    if (!nro_registro || nro_registro.trim() === "")
-      throw new Error("O campo nro_registro é obrigatório.");
+import { DataTypes, Model } from "sequelize";
+import { pgSequelize } from "../database/db.js";
 
-    if (cod_banda === null || cod_banda === undefined || cod_banda === "")
-      throw new Error("Invalid cod_banda.");
-
-    this._nro_registro = nro_registro;
-    this._cod_banda = cod_banda;
-  }
-
-  get nro_registro() {
-    return this._nro_registro;
-  }
-  get cod_banda() {
-    return this._cod_banda;
-  }
+class MusicoPertenceBanda extends Model {
+  static associate(models) {}
 }
+
+MusicoPertenceBanda.init(
+  {
+    nro_registro: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      primaryKey: true,
+      references: { model: "musico", key: "nro_registro" },
+    },
+    cod_banda: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      references: { model: "banda", key: "cod_banda" },
+    },
+  },
+  {
+    sequelize: pgSequelize,
+    modelName: "MusicoPertenceBanda",
+    tableName: "musico_pertence_banda",
+    timestamps: false,
+  }
+);
+
+export default MusicoPertenceBanda;

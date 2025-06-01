@@ -1,23 +1,31 @@
-export default class MusicoTocaInstrumento {
-  constructor(nro_registro, cod_instrumento) {
-    if (!nro_registro || nro_registro.trim() === "")
-      throw new Error("O campo nro_registro é obrigatório.");
+import { DataTypes, Model } from "sequelize";
+import { pgSequelize } from "../database/db.js";
 
-    if (
-      cod_instrumento === null ||
-      cod_instrumento === undefined ||
-      cod_instrumento === ""
-    )
-      throw new Error("Invalid cod_instrumento.");
-
-    this._nro_registro = nro_registro;
-    this._cod_instrumento = cod_instrumento;
-  }
-
-  get nro_registro() {
-    return this._nro_registro;
-  }
-  get cod_instrumento() {
-    return this._cod_instrumento;
-  }
+class MusicoTocaInstrumento extends Model {
+  static associate(models) {}
 }
+
+MusicoTocaInstrumento.init(
+  {
+    nro_registro: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      primaryKey: true,
+      references: { model: "musico", key: "nro_registro" },
+    },
+    cod_instrumento: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      references: { model: "instrumento", key: "cod_instrumento" },
+    },
+  },
+  {
+    sequelize: pgSequelize,
+    modelName: "MusicoTocaInstrumento",
+    tableName: "musico_toca_instrumento",
+    timestamps: false,
+  }
+);
+
+export default MusicoTocaInstrumento;

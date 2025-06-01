@@ -1,6 +1,4 @@
-import { Pool } from "pg";
 import "dotenv/config";
+import { Sequelize } from "sequelize";
 
-export const pgPool = new Pool({
-  connectionString: process.env.CONNECTION_STRING,
-});
+export const pgSequelize = new Sequelize(process.env.CONNECTION_STRING);

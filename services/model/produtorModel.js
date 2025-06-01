@@ -1,23 +1,33 @@
-export default class Produtor {
-  constructor(cod_produtor, nome) {
-    if (
-      cod_produtor === null ||
-      cod_produtor === undefined ||
-      cod_produtor === ""
-    )
-      throw new Error("Invalid cod_produtor.");
+import { DataTypes, Model } from "sequelize";
+import { pgSequelize } from "../database/db.js";
 
-    if (!nome || nome.trim() === "")
-      throw new Error("O campo nome é obrigatório.");
-
-    this._cod_produtor = cod_produtor;
-    this._nome = nome;
-  }
-
-  get cod_produtor() {
-    return this._cod_produtor;
-  }
-  get nome() {
-    return this._nome;
+class Produtor extends Model {
+  static associate(models) {
+    Produtor.hasMany(models.Disco, {
+      foreignKey: "cod_produtor",
+      as: "discos",
+    });
   }
 }
+
+Produtor.init(
+  {
+    cod_produtor: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    nome: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+    },
+  },
+  {
+    sequelize: pgSequelize,
+    modelName: "Produtor",
+    tableName: "produtor",
+    timestamps: false,
+  }
+);
+
+export default Produtor;

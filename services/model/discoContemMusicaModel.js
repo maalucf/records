@@ -1,19 +1,31 @@
-export default class DiscoContemMusica {
-  constructor(cod_disco, cod_musica) {
-    if (cod_disco === null || cod_disco === undefined || cod_disco === "")
-      throw new Error("Invalid cod_disco.");
+import { DataTypes, Model } from "sequelize";
+import { pgSequelize } from "../database/db.js";
 
-    if (cod_musica === null || cod_musica === undefined || cod_musica === "")
-      throw new Error("Invalid cod_musica.");
-
-    this._cod_disco = cod_disco;
-    this._cod_musica = cod_musica;
-  }
-
-  get cod_disco() {
-    return this._cod_disco;
-  }
-  get cod_musica() {
-    return this._cod_musica;
-  }
+class DiscoContemMusica extends Model {
+  static associate(models) {}
 }
+
+DiscoContemMusica.init(
+  {
+    cod_disco: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      references: { model: "disco", key: "cod_disco" },
+    },
+    cod_musica: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      references: { model: "musica", key: "cod_musica" },
+    },
+  },
+  {
+    sequelize: pgSequelize,
+    modelName: "DiscoContemMusica",
+    tableName: "disco_contem_musica",
+    timestamps: false,
+  }
+);
+
+export default DiscoContemMusica;
