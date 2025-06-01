@@ -1,4 +1,5 @@
 import { DataTypes, Model } from "sequelize";
+
 import { pgSequelize } from "../database/db.js";
 
 class Localizacao extends Model {

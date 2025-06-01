@@ -2,7 +2,6 @@
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
-    "eslint": "^9.28.0",
     "express": "^5.1.0",
     "pg": "^8.16.0",
     "pg-hstore": "^2.3.4",
@@ -11,10 +10,13 @@
   "devDependencies": {
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.2",
-    "@types/pg": "^8.15.2"
+    "@types/pg": "^8.15.2",
+    "eslint": "^9.28.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1"
   },
   "scripts": {
-    "lint": "eslint . --ext .js,.ts"
+    "lint": "eslint . --ext .js,.ts --fix"
   },
   "type": "module"
 }
