@@ -19,14 +19,4 @@ async function getDiscoById(cod_disco) {
   });
 }
 
-async function getDiscoByArtista(id_artista) {
-  return await Disco.findAll({
-    where: { id_artista },
-    include: [
-      { model: Musica, as: "musicas" },
-      { model: Produtor, as: "produtor" },
-    ],
-  });
-}
-
-export { getDiscoByArtista, getDiscoById, getDiscos };
+export { getDiscoById, getDiscos };

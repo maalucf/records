@@ -1,5 +1,14 @@
 import db from "../model/index.js";
-const { Artista, Banda, Instrumento, Localizacao, Musico } = db;
+const {
+  Artista,
+  Banda,
+  Disco,
+  Instrumento,
+  Localizacao,
+  Musica,
+  Musico,
+  Produtor,
+} = db;
 
 async function getArtistas() {
   return await Artista.findAll({
@@ -52,4 +61,26 @@ async function getArtistaById(id_artista) {
   });
 }
 
-export { getArtistaById, getArtistas };
+async function getDiscosByIdArtista(id_artista) {
+  return await Artista.findAll({
+    where: { id_artista },
+    include: [
+      {
+        model: Disco,
+        as: "discos",
+        include: [
+          {
+            model: Musica,
+            as: "musicas",
+          },
+          {
+            model: Produtor,
+            as: "produtor",
+          },
+        ],
+      },
+    ],
+  });
+}
+
+export { getArtistaById, getArtistas, getDiscosByIdArtista };
