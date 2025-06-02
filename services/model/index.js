@@ -16,18 +16,18 @@ import Produtor from "./produtorModel.js";
 const db = {
   pgSequelize,
   Administrador,
-  Localizacao,
   Artista,
-  Musico,
-  Banda,
-  MusicoPertenceBanda,
-  Instrumento,
-  MusicoTocaInstrumento,
-  Musica,
   ArtistaParticipaMusica,
-  Produtor,
+  Banda,
   Disco,
   DiscoContemMusica,
+  Instrumento,
+  Localizacao,
+  Musica,
+  Musico,
+  MusicoPertenceBanda,
+  MusicoTocaInstrumento,
+  Produtor,
 };
 
 Object.values(db).forEach((model) => {
