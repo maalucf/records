@@ -1,9 +1,14 @@
+import { compare, genSalt, hash } from "bcrypt";
 import { DataTypes, Model } from "sequelize";
 
 import { pgSequelize } from "../database/db.js";
 
 class Administrador extends Model {
   static associate(models) {}
+
+  async validPassword(senha) {
+    return await compare(senha, this.senha);
+  }
 }
 
 Administrador.init(
@@ -32,6 +37,12 @@ Administrador.init(
     modelName: "Administrador",
     tableName: "administrador",
     timestamps: false,
+    hooks: {
+      beforeCreate: async (adm) => {
+        const salt = await genSalt(10);
+        adm.senha = await hash(adm.senha, salt);
+      },
+    },
   }
 );
 
