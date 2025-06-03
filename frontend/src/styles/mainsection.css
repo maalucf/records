@@ -38,22 +38,23 @@
   }
 }
 
-@keyframes rotation {
-  0% {
-    transform: rotate(0deg);
-  }
+.wave-sound {
+  width: 100%;
+  height: 100px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  margin-bottom: 80px;
 
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes inverse-rotation {
-  0% {
-    transform: rotate(360deg);
-  }
-
-  100% {
-    transform: rotate(0deg);
+  .stroke {
+    display: block;
+    position: relative;
+    background: #814AC8;
+    opacity: 0.1;
+    height: 100%;
+    width: 10px;
+    border-radius: 50px;
+    margin: 0 5px;
+    animation: wave-sound-effect 3.5s linear infinite;
   }
 }

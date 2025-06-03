@@ -1,20 +1,35 @@
 import { Col, Row } from "antd";
 import ArtistCard from "./ArtistCard";
+import { useEffect, useRef, useState } from "react";
+import { artists } from "@/util/artists";
 
 export default function ArtistsSection() {
-  const artists = [
-    {name: 'artista 1'},
-    {name: 'artista 2'},
-    {name: 'artista 3'},
-    {name: 'artista 4'},
-    {name: 'artista 5'},
-    {name: 'artista 6'},
-    {name: 'artista 7'},
-    {name: 'artista 8'},
-  ]
+  const [visible, setIsVisible] = useState(false)
+  const sectionRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(entry.isIntersecting);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
 
   return (
-    <section className={"artists-section"}>
+    <section className={`artists-section ${visible ? 'visible' : ''}`} ref={sectionRef}>
       <div className="artists-section-wrapper">
         <Row>
           <h1>ARTISTAS</h1>
@@ -23,7 +38,7 @@ export default function ArtistsSection() {
           {artists?.map((artist, index) => {
             return (
               <Col span={4} key={index}>
-                <ArtistCard artistName={artist?.name}/>
+                <ArtistCard name={artist?.name} thumb={artist?.thumb} musicGender={artist?.musicGender} albuns={artist?.albuns} />
               </Col>
             )
           })}

@@ -1,0 +1,83 @@
+.album-page {
+  width: 100%;
+  min-height: 100dvh;
+  padding: 40px;
+
+  .header {
+    background: linear-gradient(#353535FF, rgb(24, 24, 24));
+    color: white;
+    padding: 15px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+
+    .artist-photo {
+      box-shadow: 1px 1px 8px rgb(24, 24, 24);
+    }
+
+    .album-infos {
+      margin-left: 20px;
+      display: flex;
+      align-items: end;
+
+      .classification {
+        font-size: 14px;
+      }
+
+      .name {
+        font-size: 96px;
+      }
+
+      .artist {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+
+        .photo {
+          border-radius: 20px;
+          margin-right: 10px;
+        }
+      }
+
+      .artist:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .music-infos {
+    background-color: rgb(24, 24, 24);
+
+    .ant-table {
+      background: rgb(24, 24, 24) !important;
+      color: white;
+
+      .ant-table-thead {
+        border-start-start-radius: none !important;
+
+
+        .ant-table-cell {
+          color: white;
+          border-radius: 0;
+          background: transparent !important;
+          border-bottom: 1px solid rgba(114, 114, 114, 0.623);
+        }
+
+        .ant-table-cell::before {
+          display: none !important;
+        }
+      }
+
+      .ant-table-tbody {
+        .ant-table-cell {
+          border-bottom: none !important;
+        }
+
+        .ant-table-cell-row-hover {
+          background: rgb(31, 31, 31) !important;
+        }
+      }
+    }
+
+  }
+
+}

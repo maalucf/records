@@ -2,6 +2,9 @@
 @import url(../styles/mainsection.css);
 @import url(../styles/artistssection.css);
 @import url(../styles/albumssection.css);
+@import url(../styles/keyframes.css);
+@import url(../styles/albumspage.css);
+@import url(../styles/albumpage.css);
 
 :root {
   --background: #ffffff;
