@@ -60,6 +60,8 @@ async function createDiscoComMusicas(dadosDisco) {
   for (const umaMusica of musicas) {
     const instancia = await findOrCreateMusica(umaMusica);
     instanciasMusicas.push(instancia);
+
+    await instancia.addArtista(id_artista);
   }
 
   await novoDisco.addMusicas(instanciasMusicas);
