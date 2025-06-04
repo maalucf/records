@@ -13,7 +13,7 @@ export default function HeaderMenu() {
   const [activeKey, setActiveKey] = useState("/")
   
   const items = [
-    {key: '/', label: 'Home'},
+    {key: '/', label: 'Início'},
     {key: '/artists', label: 'Artistas'},
     {key: '/albums', label: 'Álbuns'}
   ]

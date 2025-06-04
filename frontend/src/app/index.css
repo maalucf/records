@@ -5,6 +5,7 @@
 @import url(../styles/keyframes.css);
 @import url(../styles/albumspage.css);
 @import url(../styles/albumpage.css);
+@import url(../styles/artistspage.css);
 
 :root {
   --background: #ffffff;
