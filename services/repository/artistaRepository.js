@@ -83,4 +83,14 @@ async function getDiscosByIdArtista(id_artista) {
   });
 }
 
-export { getArtistaById, getArtistas, getDiscosByIdArtista };
+async function createArtista(dadosArtista) {
+  const { generos_musicais, nome, url_imagem } = dadosArtista;
+  
+  return await Artista.create({
+    nome,
+    generos_musicais,
+    url_imagem,
+  });
+}
+
+export { createArtista, getArtistaById, getArtistas, getDiscosByIdArtista };

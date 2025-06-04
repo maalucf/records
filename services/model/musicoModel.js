@@ -53,6 +53,32 @@ Musico.init(
     modelName: "Musico",
     tableName: "musico",
     timestamps: false,
+    hooks: {
+      beforeCreate: async (musico, opts) => {
+        const Banda = musico.sequelize.models.Banda;
+        const existeBanda = await Banda.findOne({
+          where: { id_artista: musico.id_artista },
+        });
+        if (existeBanda) {
+          throw new Error(
+            `Não é possível criar Músico: o Artista ${musico.id_artista} já está cadastrado como Banda.`
+          );
+        }
+      },
+      beforeUpdate: async (musico, opts) => {
+        if (musico.changed("id_artista")) {
+          const Banda = musico.sequelize.models.Banda;
+          const existeBanda = await Banda.findOne({
+            where: { id_artista: musico.id_artista },
+          });
+          if (existeBanda) {
+            throw new Error(
+              `Não é possível alterar Músico: o Artista ${musico.id_artista} já está cadastrado como Banda.`
+            );
+          }
+        }
+      },
+    },
   }
 );
 

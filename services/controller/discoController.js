@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { getDiscoById, getDiscos } from "../repository/discoRepository.js";
+import { createDiscoComMusicas, getDiscoById, getDiscos } from "../repository/discoRepository.js";
 
 const router = Router();
 
@@ -33,6 +33,20 @@ router.get("/discos/:cod_disco", async (req, res) => {
     return res.status(500).json({
       message: `Erro ao buscar disco com cod_disco=${req.params.cod_disco}.`,
     });
+  }
+});
+
+router.post("/discos", async (req, res) => {
+  try {
+    const dados = req.body;
+
+    const discoCriado = await createDiscoComMusicas(dados);
+
+    return res.status(201).json(discoCriado);
+  } catch (err) {
+    console.error(err);
+
+    return res.status(400).json({ message: err.message });
   }
 });
 
