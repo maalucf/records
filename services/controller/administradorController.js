@@ -5,6 +5,7 @@ import {
   getAdministradorByEmail,
   loginAdministrador,
 } from "../repository/administradorRepository.js";
+import throwError from "./errors/error.js";
 
 const router = Router();
 
@@ -41,9 +42,8 @@ router.post("/administradores", async (req, res) => {
     ) {
       return res.status(409).json({ message: "Email já cadastrado." });
     }
-    return res
-      .status(500)
-      .json({ message: "Erro interno ao criar administrador." });
+
+    throwError(err, res);
   }
 });
 

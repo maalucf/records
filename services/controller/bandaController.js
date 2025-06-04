@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import { createBandaComMusicos } from "../repository/bandaRepository.js";
+import throwError from "./errors/error.js";
 
 const router = Router();
 
@@ -21,7 +22,7 @@ router.post("/bandas", async (req, res) => {
   } catch (err) {
     console.error(err);
 
-    return res.status(500).json({ message: "Erro interno ao criar banda." });
+    throwError(err, res);
   }
 });
 

@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import { createDiscoComMusicas, getDiscoById, getDiscos } from "../repository/discoRepository.js";
+import throwError from "./errors/error.js";
 
 const router = Router();
 
@@ -46,7 +47,7 @@ router.post("/discos", async (req, res) => {
   } catch (err) {
     console.error(err);
 
-    return res.status(400).json({ message: err.message });
+    throwError(err, res);
   }
 });
 

@@ -1,14 +1,21 @@
 import { Router } from "express";
 
 import { createOrFindMusico } from "../repository/musicoRepository.js";
+import throwError from "./errors/error.js";
 
 const router = Router();
 
 router.post("/musicos", async (req, res) => {
   const dadosMusico = req.body;
 
-  if (!dadosMusico.nome || !dadosMusico.nro_registro || !dadosMusico.id_localizacao) {
-    return res.status(400).json({ message: "Campos obrigatórios: nome, nro_registro, id_localizacao." });
+  if (
+    !dadosMusico.nome ||
+    !dadosMusico.nro_registro ||
+    !dadosMusico.localizacao
+  ) {
+    return res.status(400).json({
+      message: "Campos obrigatórios: nome, nro_registro, localizacao.",
+    });
   }
 
   try {
@@ -21,7 +28,7 @@ router.post("/musicos", async (req, res) => {
   } catch (err) {
     console.error(err);
 
-    return res.status(500).json({ message: "Erro interno ao criar músico." });
+    throwError(err, res);
   }
 });
 
