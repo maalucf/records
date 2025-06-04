@@ -1,7 +1,7 @@
 import db from "../model/index.js";
 import { createArtista } from "./artistaRepository.js";
 import { createOrFindMusico } from "./musicoRepository.js";
-const { Instrumento, Musico } = db;
+const { Artista, Instrumento, Musico } = db;
 
 async function createBandaComMusicos(dados) {
   const {
@@ -40,4 +40,25 @@ async function createBandaComMusicos(dados) {
   return banda;
 }
 
-export { createBandaComMusicos };
+async function getBandaMusicos(cod_banda) {
+  const banda = await db.Banda.findByPk(cod_banda, {
+    include: [
+      {
+        model: Musico,
+        as: "musicos",
+        include: [
+          { model: Artista, as: "artista" },
+          { model: Instrumento, as: "instrumentos" },
+        ],
+      },
+    ],
+  });
+
+  if (!banda) {
+    throw new Error(`Banda com cod_banda=${cod_banda} não encontrada.`);
+  }
+
+  return banda;
+}
+
+export { createBandaComMusicos, getBandaMusicos };

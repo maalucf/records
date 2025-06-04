@@ -1,3 +1,5 @@
+import { literal,Op } from "sequelize";
+
 import db from "../model/index.js";
 const {
   Artista,
@@ -11,28 +13,41 @@ const {
 } = db;
 
 async function getArtistas() {
-  return await Artista.findAll({
+  const artistas = await Artista.findAll({
     include: [
       {
         model: Banda,
         as: "bandas",
+        required: false, // LEFT JOIN banda
       },
       {
         model: Musico,
         as: "musicos",
+        required: false, // LEFT JOIN musico
         include: [
-          {
-            model: Instrumento,
-            as: "instrumentos",
-          },
-          {
-            model: Localizacao,
-            as: "localizacao",
-          },
+          { model: Instrumento, as: "instrumentos", required: false },
+          { model: Localizacao, as: "localizacao", required: false },
         ],
       },
     ],
+    where: {
+      [Op.or]: [
+        { "$bandas.cod_banda$": { [Op.not]: null } },
+
+        literal(`
+          "musicos"."nro_registro" IS NOT NULL
+          AND NOT EXISTS (
+            SELECT 1
+              FROM musico_pertence_banda AS mpb
+             WHERE mpb.nro_registro = "musicos"."nro_registro"
+          )
+        `),
+      ],
+    },
+    distinct: true,
   });
+
+  return artistas.map((a) => a.get({ plain: true }));
 }
 
 async function getArtistaById(id_artista) {
@@ -85,7 +100,7 @@ async function getDiscosByIdArtista(id_artista) {
 
 async function createArtista(dadosArtista) {
   const { generos_musicais, nome, url_imagem } = dadosArtista;
-  
+
   return await Artista.create({
     nome,
     generos_musicais,

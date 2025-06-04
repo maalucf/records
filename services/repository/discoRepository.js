@@ -1,7 +1,7 @@
 import db from "../model/index.js";
 import { findOrCreateMusica } from "./musicaRepository.js";
 import { createOrFindProdutor } from "./produtorRepository.js";
-const { Disco, Musica, Produtor } = db;
+const { Artista, Disco, Musica, Produtor } = db;
 
 async function getDiscos() {
   return await Disco.findAll({
@@ -66,7 +66,11 @@ async function createDiscoComMusicas(dadosDisco) {
 
   await novoDisco.reload({
     include: [
-      { model: Musica, as: "musicas" },
+      {
+        model: Musica,
+        as: "musicas",
+        include: [{ model: Artista, as: "artistas" }],
+      },
       { model: Produtor, as: "produtor" },
     ],
   });

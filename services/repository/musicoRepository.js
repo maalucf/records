@@ -17,7 +17,7 @@ async function createOrFindMusico(dadosMusico) {
 
   if (nro_registro && !nome) {
     const existente = await Musico.findByPk(nro_registro, {
-      include: [{ model: db.Instrumento, as: "instrumentos" }],
+      include: [{ model: Instrumento, as: "instrumentos" }],
     });
     if (!existente) {
       throw new Error(
