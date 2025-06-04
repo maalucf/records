@@ -38,7 +38,7 @@ export default function ArtistsSection() {
           {artists?.map((artist, index) => {
             return (
               <Col span={4} key={index}>
-                <ArtistCard name={artist?.name} thumb={artist?.thumb} musicGender={artist?.musicGender} albuns={artist?.albuns} />
+                <ArtistCard artist={artist} />
               </Col>
             )
           })}

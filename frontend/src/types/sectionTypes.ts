@@ -1,8 +1,10 @@
 export interface IArtistCard {
-  name: string
-  thumb: string
-  musicGender: string
-  albuns: string
+  artist: {
+    name: string
+    thumb: string
+    musicGender: string
+    albuns: string
+  }
 }
 
 
