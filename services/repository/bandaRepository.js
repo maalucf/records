@@ -1,7 +1,7 @@
 import db from "../model/index.js";
 import { createArtista } from "./artistaRepository.js";
 import { createOrFindMusico } from "./musicoRepository.js";
-const { Artista, Instrumento, Musico } = db;
+const { Artista, Banda, Instrumento, Localizacao, Musico } = db;
 
 async function createBandaComMusicos(dados) {
   const {
@@ -21,8 +21,8 @@ async function createBandaComMusicos(dados) {
 
   const instanciasMusicos = [];
   for (const dadosMusico of musicos) {
-    const musicoInstance = await createOrFindMusico(dadosMusico);
-    instanciasMusicos.push(musicoInstance);
+    const instancia = await createOrFindMusico(dadosMusico);
+    instanciasMusicos.push(instancia);
   }
 
   await banda.addMusicos(instanciasMusicos);
@@ -61,4 +61,67 @@ async function getBandaMusicos(cod_banda) {
   return banda;
 }
 
-export { createBandaComMusicos, getBandaMusicos };
+async function updateBandaComMusicos(cod_banda, dados) {
+  const {
+    generos_musicais = null,
+    musicos = [],
+    nome,
+    url_imagem = null,
+  } = dados;
+
+  // Busca a Banda
+  const banda = await Banda.findByPk(cod_banda, {
+    include: [{ model: Artista, as: "artista" }],
+  });
+  if (!banda) {
+    throw new Error(`Banda com cod_banda=${cod_banda} não encontrada.`);
+  }
+
+  // Atualiza o Artista
+  const artista = banda.artista;
+  const camposArtistaParaAtualizar = {};
+  if (nome !== undefined) {
+    camposArtistaParaAtualizar.nome = nome;
+  }
+  if (generos_musicais !== undefined) {
+    camposArtistaParaAtualizar.generos_musicais = generos_musicais;
+  }
+  if (url_imagem !== undefined) {
+    camposArtistaParaAtualizar.url_imagem = url_imagem;
+  }
+  if (Object.keys(camposArtistaParaAtualizar).length > 0) {
+    await artista.update(camposArtistaParaAtualizar);
+  }
+
+  // Atualiza os Músicos
+  if (Array.isArray(musicos)) {
+    const instanciasMusicos = [];
+
+    for (const dadosMusico of musicos) {
+      dadosMusico.artistas = [{ id_artista: artista.id_artista }];
+
+      const instancia = await createOrFindMusico(dadosMusico);
+      instanciasMusicos.push(instancia);
+    }
+
+    await banda.setMusicos(instanciasMusicos);
+  }
+
+  await banda.reload({
+    include: [
+      { model: Artista, as: "artista" },
+      {
+        model: Musico,
+        as: "musicos",
+        include: [
+          { model: Instrumento, as: "instrumentos" },
+          { model: Localizacao, as: "localizacao" },
+        ],
+      },
+    ],
+  });
+
+  return banda;
+}
+
+export { createBandaComMusicos, getBandaMusicos, updateBandaComMusicos };

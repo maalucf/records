@@ -1,4 +1,6 @@
 function throwError(err, res) {
+  console.error(err);
+
   if (err.name === "SequelizeUniqueConstraintError") {
     const campos = err.errors.map((e) => e.path).join(", ");
     return res.status(409).json({

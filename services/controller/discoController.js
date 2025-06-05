@@ -1,6 +1,11 @@
 import { Router } from "express";
 
-import { createDiscoComMusicas, getDiscoById, getDiscos } from "../repository/discoRepository.js";
+import {
+  createDiscoComMusicas,
+  getDiscoById,
+  getDiscos,
+  updateDiscoComMusicas,
+} from "../repository/discoRepository.js";
 import throwError from "./errors/error.js";
 
 const router = Router();
@@ -45,8 +50,24 @@ router.post("/discos", async (req, res) => {
 
     return res.status(201).json(discoCriado);
   } catch (err) {
-    console.error(err);
+    throwError(err, res);
+  }
+});
 
+router.put("/discos/:cod_disco", async (req, res) => {
+  const { cod_disco } = req.params;
+  const dados = req.body;
+
+  try {
+    const discoAtualizado = await updateDiscoComMusicas(
+      Number(cod_disco),
+      dados
+    );
+    return res.status(200).json({
+      message: "Disco atualizado com sucesso.",
+      disco: discoAtualizado,
+    });
+  } catch (err) {
     throwError(err, res);
   }
 });

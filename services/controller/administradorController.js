@@ -35,14 +35,6 @@ router.post("/administradores", async (req, res) => {
       administrador: dadosSeguros,
     });
   } catch (err) {
-    console.error(err);
-    if (
-      err.name === "SequelizeUniqueConstraintError" ||
-      err.name === "SequelizeValidationError"
-    ) {
-      return res.status(409).json({ message: "Email já cadastrado." });
-    }
-
     throwError(err, res);
   }
 });

@@ -1,6 +1,9 @@
 import { Router } from "express";
 
-import { createOrFindMusico } from "../repository/musicoRepository.js";
+import {
+  createOrFindMusico,
+  updateMusico,
+} from "../repository/musicoRepository.js";
 import throwError from "./errors/error.js";
 
 const router = Router();
@@ -26,8 +29,28 @@ router.post("/musicos", async (req, res) => {
       musico: novoMusico,
     });
   } catch (err) {
-    console.error(err);
+    throwError(err, res);
+  }
+});
 
+router.put("/musicos/:nro_registro", async (req, res) => {
+  const { nro_registro } = req.params;
+  const dadosMusico = req.body;
+
+  if (!nro_registro || !dadosMusico) {
+    return res.status(400).json({
+      message: "Campos obrigatórios: nro_registro e dados do músico.",
+    });
+  }
+
+  try {
+    const musicoAtualizado = await updateMusico(nro_registro, dadosMusico);
+
+    return res.status(200).json({
+      message: "Músico atualizado com sucesso.",
+      musico: musicoAtualizado,
+    });
+  } catch (err) {
     throwError(err, res);
   }
 });
