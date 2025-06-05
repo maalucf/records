@@ -18,9 +18,9 @@ export async function createOrFindInstrumento(dadosInstrumento) {
     throw new Error("Para criar novo Instrumento, informe { nome }.");
   }
 
-  let existente = await Instrumento.findOne({ where: { nome } });
-  if (existente) {
-    return existente;
+  const instrumento = await Instrumento.findOne({ where: { nome } });
+  if (instrumento) {
+    return instrumento;
   }
 
   return await Instrumento.create({ nome });

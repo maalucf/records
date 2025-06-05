@@ -4,7 +4,7 @@ const { Localizacao } = db;
 export async function createOrFindLocalizacao(dadosLocalizacao) {
   const { endereco, id_localizacao, telefone } = dadosLocalizacao || {};
 
-  if (id_localizacao && !telefone && !endereco) {
+  if (id_localizacao) {
     const loc = await Localizacao.findByPk(id_localizacao);
     if (!loc) {
       throw new Error(
@@ -18,6 +18,11 @@ export async function createOrFindLocalizacao(dadosLocalizacao) {
     throw new Error(
       "Para criar nova Localizacao, informe { telefone, endereco }."
     );
+  }
+
+  const localizacao = await Localizacao.findOne({ where: { endereco } });
+  if (localizacao) {
+    return localizacao;
   }
 
   return await Localizacao.create({ telefone, endereco });
