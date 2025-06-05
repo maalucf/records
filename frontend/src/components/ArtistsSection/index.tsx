@@ -1,3 +1,5 @@
+'use client'
+
 import { Col, Row } from "antd";
 import ArtistCard from "./ArtistCard";
 import { useEffect, useRef, useState } from "react";

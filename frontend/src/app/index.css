@@ -6,6 +6,7 @@
 @import url(../styles/albumspage.css);
 @import url(../styles/albumpage.css);
 @import url(../styles/artistspage.css);
+@import url(../styles/artistpage.css);
 
 :root {
   --background: #ffffff;

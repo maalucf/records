@@ -12,6 +12,7 @@
 
     .artist-photo {
       box-shadow: 1px 1px 8px rgb(24, 24, 24);
+      border-radius: 8px;
     }
 
     .album-infos {

@@ -4,13 +4,13 @@ import { IAlbumMusic } from "@/types/sectionTypes";
 import { albums } from "@/util/albums";
 import { Col, Row, Table } from "antd";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 export default function AlbumPage() {
   const { id } = useParams()
+  const router = useRouter()
   const currentAlbum = albums?.filter((album) => album.id === Number(id))[0]
-
-  console.log(currentAlbum?.musics)
+  
 
   const columns = [
     {
@@ -46,6 +46,11 @@ export default function AlbumPage() {
     }
   ];
 
+  function gotoArtistPage() {
+    // currentAlbum?.artist_id
+    router.push(`/artists/${currentAlbum?.artist_id}`)
+  }
+
 
   return (
     <div className="album-page">
@@ -66,7 +71,7 @@ export default function AlbumPage() {
               </p>
             </Col>
             <Col span={24}>
-              <span className="artist" onClick={() => alert('vai pra página do artista')}>
+              <span className="artist" onClick={gotoArtistPage}>
                 <Image src={currentAlbum?.thumb} width={24} height={24} alt="album-photo" className="photo"/>
                 {currentAlbum?.artist}
               </span>

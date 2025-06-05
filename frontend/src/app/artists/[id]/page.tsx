@@ -1,5 +1,96 @@
+'use client'
+
+import AlbumCard from "@/components/AlbumsSection/AlbumCard";
+import { albums } from "@/util/albums";
+import { artists } from "@/util/artists";
+import { Col, Row } from "antd";
+import Image from "next/image";
+import { useParams } from "next/navigation";
+
 export default function ArtistPage() {
+  const { id } = useParams()
+  const currentArtist = artists?.filter((artist) => artist.id === Number(id))[0]
+  const artistAlbums = albums?.filter((album) => album?.artist_id === currentArtist?.id)
+
   return (
-    <h1 style={{color: 'white'}}>{'ARTISTA ESPECÍFICO'}</h1>
+    <div className="artist-page">
+      <Row className="header">
+        <Col>
+          <Image src={currentArtist?.thumb} width={232} height={232} alt="album-photo" className="artist-photo"/>
+        </Col>
+        <Col span={20} className="artist-infos">
+          <Row>
+            <Col span={24}>
+              <p className="classification">
+                {"Músico"}
+              </p>
+            </Col>
+            <Col span={24}>
+              <p className="name">
+                {currentArtist?.name}
+              </p>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+      <Row className="artist-content">
+        <div className="infos">
+          <Row gutter={[16,16]} style={{width: '100%'}}>
+            <Col span={12}>
+              <h1>{"Instrumentos tocados"}</h1>
+
+              <Row style={{marginTop: 10}} gutter={[16,16]}>
+                {currentArtist?.instruments?.map((instrument, index) => {
+                  return (
+                    <Col span={4} key={index}>
+                      <div className="instrument-show">
+                        {instrument?.icon}
+                        <h2>
+                          {instrument?.name}
+                        </h2>
+                      </div>
+                    </Col>
+                  )
+                })}
+              </Row>
+            </Col>
+            <Col span={12}>
+              <h1>{"Informações Gerais"}</h1>
+              <Row className="info-row">
+                <h2>
+                  {`Idade: ${currentArtist?.generalInfo?.age} anos`}
+                </h2>
+                
+              </Row>
+
+              <Row className="info-row">
+                <h2>
+                  {`Estilo Musical: ${currentArtist?.generalInfo?.music_style}`}
+                </h2>
+              </Row>
+
+              <Row className="info-row">
+                <h2>
+                  {`Localização: ${currentArtist?.generalInfo?.location} `}
+                </h2>
+              </Row>
+
+            </Col>
+          </Row>
+        </div>
+        <div className="albums">
+            <Row>
+              <h1 style={{ color: "white" }}>ÁLBUNS</h1>
+            </Row>
+            <Row style={{ marginTop: 10 }} gutter={[16, 16]}>
+              {artistAlbums?.map((album, index) => (
+                <Col span={4} key={index}>
+                  <AlbumCard album={album} />
+                </Col>
+              ))}
+            </Row>
+        </div>
+      </Row>
+    </div>
   );
 }
