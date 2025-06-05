@@ -153,8 +153,25 @@ async function updateDiscoComMusicas(cod_disco, dadosDisco) {
   return disco;
 }
 
+async function deleteDisco(cod_disco) {
+  if (!cod_disco) {
+    throw new Error("Para deletar, informe { cod_disco } do disco.");
+  }
+
+  const qtdDeletados = await Disco.destroy({
+    where: { cod_disco },
+  });
+
+  if (qtdDeletados === 0) {
+    throw new Error(`Disco com cod_disco="${cod_disco}" não encontrado.`);
+  }
+
+  return true;
+}
+
 export {
   createDiscoComMusicas,
+  deleteDisco,
   getDiscoById,
   getDiscos,
   updateDiscoComMusicas,

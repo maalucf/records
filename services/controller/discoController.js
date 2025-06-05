@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import {
   createDiscoComMusicas,
+  deleteDisco,
   getDiscoById,
   getDiscos,
   updateDiscoComMusicas,
@@ -67,6 +68,28 @@ router.put("/discos/:cod_disco", async (req, res) => {
       message: "Disco atualizado com sucesso.",
       disco: discoAtualizado,
     });
+  } catch (err) {
+    throwError(err, res);
+  }
+});
+
+router.delete("/discos/:cod_disco", async (req, res) => {
+  const { cod_disco } = req.params;
+
+  if (!cod_disco) {
+    return res.status(400).json({
+      message: "Para deletar, informe { cod_disco } do disco.",
+    });
+  }
+
+  try {
+    const deleted = await deleteDisco(cod_disco);
+
+    if (deleted) {
+      return res.status(200).json({
+        message: `Disco com cod_disco=${cod_disco} deletado com sucesso.`,
+      });
+    }
   } catch (err) {
     throwError(err, res);
   }
