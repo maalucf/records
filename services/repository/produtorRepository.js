@@ -18,7 +18,7 @@ async function createOrFindProdutor(dadosProdutor) {
     throw new Error("Para criar novo Produtor, informe { nome }.");
   }
 
-  let produtor = await Produtor.findOne({ where: { nome } });
+  const produtor = await Produtor.findOne({ where: { nome } });
   if (produtor) {
     return produtor;
   }

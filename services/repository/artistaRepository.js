@@ -108,4 +108,22 @@ async function createArtista(dadosArtista) {
   });
 }
 
-export { createArtista, getArtistaById, getArtistas, getDiscosByIdArtista };
+async function deleteArtista(id_artista) {
+  if (!id_artista) {
+    throw new Error("Para deletar, informe { id_artista } do artista.");
+  }
+
+  const qtdDeletados = await Artista.destroy({
+    where: { id_artista },
+  });
+
+  if (qtdDeletados === 0) {
+    throw new Error(
+      `Artista com id_artista="${id_artista}" não encontrado.`
+    );
+  }
+
+  return true;
+}
+
+export { createArtista, deleteArtista, getArtistaById, getArtistas, getDiscosByIdArtista };
