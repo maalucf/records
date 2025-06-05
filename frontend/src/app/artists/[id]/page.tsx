@@ -1,18 +1,34 @@
 'use client'
 
 import AlbumCard from "@/components/AlbumsSection/AlbumCard";
+import CreateOrEditArtistModal from "@/components/CreateOrEditArtistModal";
 import { albums } from "@/util/albums";
 import { artists } from "@/util/artists";
 import { Col, Row } from "antd";
 import Image from "next/image";
 import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { MdCreate } from "react-icons/md";
 
 export default function ArtistPage() {
   const { id } = useParams()
   const currentArtist = artists?.filter((artist) => artist.id === Number(id))[0]
   const artistAlbums = albums?.filter((album) => album?.artist_id === currentArtist?.id)
+  const [showEditArtistModal, setShowEditArtistModal] = useState(false)
+  const [isAnAdminUser, setIsAnAdminUser] = useState(false)
+  
+  useEffect(() => {
+    if(localStorage?.getItem("isAnAdminUser")) {
+      setIsAnAdminUser(true)
+    }
+  }, [])
+
 
   return (
+    <>
+    {showEditArtistModal && (
+      <CreateOrEditArtistModal setVisible={setShowEditArtistModal} artist={currentArtist}/>
+    )}
     <div className="artist-page">
       <Row className="header">
         <Col>
@@ -22,12 +38,15 @@ export default function ArtistPage() {
           <Row>
             <Col span={24}>
               <p className="classification">
-                {"Músico"}
+                {currentArtist?.classification === "musician" ? "Músico" : "Banda"}
               </p>
             </Col>
             <Col span={24}>
               <p className="name">
                 {currentArtist?.name}
+                {isAnAdminUser && (
+                  <MdCreate size={30} style={{marginLeft: 30}} className="action-artist-button" onClick={() => setShowEditArtistModal(true)}/>
+                )}
               </p>
             </Col>
           </Row>
@@ -56,12 +75,6 @@ export default function ArtistPage() {
             </Col>
             <Col span={12}>
               <h1>{"Informações Gerais"}</h1>
-              <Row className="info-row">
-                <h2>
-                  {`Idade: ${currentArtist?.generalInfo?.age} anos`}
-                </h2>
-                
-              </Row>
 
               <Row className="info-row">
                 <h2>
@@ -69,12 +82,22 @@ export default function ArtistPage() {
                 </h2>
               </Row>
 
-              <Row className="info-row">
-                <h2>
-                  {`Localização: ${currentArtist?.generalInfo?.location} `}
-                </h2>
-              </Row>
+              {isAnAdminUser && (
+                <>
+                  <Row className="info-row">
+                    <h2>
+                      {`Telefone: `}
+                    </h2>
+                    
+                  </Row>
 
+                  <Row className="info-row">
+                    <h2>
+                      {`Endereço: ${currentArtist?.generalInfo?.location} `}
+                    </h2>
+                  </Row>
+                </>
+              )}
             </Col>
           </Row>
         </div>
@@ -92,5 +115,6 @@ export default function ArtistPage() {
         </div>
       </Row>
     </div>
+    </>
   );
 }

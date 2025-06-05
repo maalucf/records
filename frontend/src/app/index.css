@@ -7,6 +7,9 @@
 @import url(../styles/albumpage.css);
 @import url(../styles/artistspage.css);
 @import url(../styles/artistpage.css);
+@import url(../styles/adminloginpage.css);
+@import url(../styles/message.css);
+@import url(../styles/createoreditartistmodal.css);
 
 :root {
   --background: #ffffff;

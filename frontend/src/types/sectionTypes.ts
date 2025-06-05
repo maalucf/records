@@ -1,3 +1,5 @@
+import { JSX } from "react"
+
 export interface IArtistCard {
   artist: {
     id: number
@@ -41,4 +43,15 @@ export interface IAlbumMusic {
 
 export interface ISoundWave {
   firstWave?: boolean
+}
+
+export interface IArtist {
+  id: number
+  name: string
+  thumb: string
+  generalInfo: {artist_type: string, age: string, music_style: string, location: string}
+  instruments: {name: string, icon: JSX.Element}[]
+  musicGender: string
+  musics: IAlbumMusic[]
+  classification: string
 }

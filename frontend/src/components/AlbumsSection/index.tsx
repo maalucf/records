@@ -4,10 +4,20 @@ import { Col, Row } from "antd";
 import AlbumCard from "./AlbumCard";
 import { albums } from "@/util/albums";
 import { useEffect, useRef, useState } from "react";
+import CreateOrEditAlbumModal from "../CreateOrEditAlbumModal ";
+import { MdOutlineAdd } from "react-icons/md";
 
 export default function AlbunsSection() {
   const [visible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement | null>(null);
+  const [showNewAlbumModal, setShowNewAlbumModal] = useState(false)
+  const [isAnAdminUser, setIsAnAdminUser] = useState(false)
+
+  useEffect(() => {
+    if(localStorage?.getItem("isAnAdminUser")) {
+      setIsAnAdminUser(true)
+    }
+  }, [])
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -29,11 +39,18 @@ export default function AlbunsSection() {
   }, []);
 
   return (
+    <>
+    {showNewAlbumModal && (
+            <CreateOrEditAlbumModal setVisible={setShowNewAlbumModal}/>
+          )}
     <section className="albums-section" ref={sectionRef}>
       <div className={`albums-section-internal ${visible ? "visible" : ""}`}>
         <div className="albums-section-wrapper">
-          <Row>
+          <Row style={{display: 'flex', alignItems: 'center'}}>
             <h1 style={{ color: "white" }}>ÁLBUNS</h1>
+            {isAnAdminUser && (
+              <MdOutlineAdd size={30} style={{marginBottom: 5}} className="action-artist-button" onClick={() => setShowNewAlbumModal(true)}/>
+            )}
           </Row>
           <Row style={{ marginTop: 10 }} gutter={[16, 16]}>
             {albums?.map((album, index) => (
@@ -45,5 +62,6 @@ export default function AlbunsSection() {
         </div>
       </div>
     </section>
+    </>
   );
 }

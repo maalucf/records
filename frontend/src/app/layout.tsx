@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "DAMA Records",
   description: "Created by Daniel & Maria",
+  icons: {
+    icon: "/favicon.ico"
+  }
 };
 
 export default function RootLayout({

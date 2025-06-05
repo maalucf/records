@@ -26,7 +26,8 @@ export const artists = [
       music_style: "pop",
       location: "R. Paulo Malschitzki, 200 - Zona Industrial Norte, Joinville - SC, 89219-710"
     },
-    instruments: [{name: "violão", icon: <GuitarIcon />}, {name: "guitarra", icon: <GuitarIcon />}, {name: "teclado", icon: <GuitarIcon />}]
+    instruments: [{name: "violão", icon: <GuitarIcon />}, {name: "guitarra", icon: <GuitarIcon />}, {name: "teclado", icon: <GuitarIcon />}],
+    classification: "musician"
   },
   {
     id: 2,
@@ -53,7 +54,8 @@ export const artists = [
       music_style: "pop",
       location: "R. Paulo Malschitzki, 200 - Zona Industrial Norte, Joinville - SC, 89219-710"
     },
-    instruments: [{name: "violão", icon: <GuitarIcon />}, {name: "guitarra", icon: <GuitarIcon />}, {name: "teclado", icon: <GuitarIcon />}]
+    instruments: [{name: "violão", icon: <GuitarIcon />}, {name: "guitarra", icon: <GuitarIcon />}, {name: "teclado", icon: <GuitarIcon />}],
+    classification: "musician"
   },
   {
     id: 3,
@@ -80,7 +82,8 @@ export const artists = [
       music_style: "hip-hop",
       location: "R. Paulo Malschitzki, 200 - Zona Industrial Norte, Joinville - SC, 89219-710"
     },
-    instruments: [{name: "violão", icon: <GuitarIcon />}, {name: "guitarra", icon: <GuitarIcon />}, {name: "teclado", icon: <GuitarIcon />}]
+    instruments: [{name: "violão", icon: <GuitarIcon />}, {name: "guitarra", icon: <GuitarIcon />}, {name: "teclado", icon: <GuitarIcon />}],
+    classification: "band"
   },
   {
     id: 4,
@@ -107,7 +110,8 @@ export const artists = [
       music_style: "pop",
       location: "R. Paulo Malschitzki, 200 - Zona Industrial Norte, Joinville - SC, 89219-710"
     },
-    instruments: [{name: "violão", icon: <GuitarIcon />}, {name: "guitarra", icon: <GuitarIcon />}, {name: "teclado", icon: <GuitarIcon />}]
+    instruments: [{name: "violão", icon: <GuitarIcon />}, {name: "guitarra", icon: <GuitarIcon />}, {name: "teclado", icon: <GuitarIcon />}],
+    classification: "musician"
   },
   {
     id: 5,
@@ -134,6 +138,7 @@ export const artists = [
       music_style: "pop",
       location: "R. Paulo Malschitzki, 200 - Zona Industrial Norte, Joinville - SC, 89219-710"
     },
-    instruments: [{name: "violão", icon: <GuitarIcon />}, {name: "guitarra", icon: <GuitarIcon />}, {name: "teclado", icon: <GuitarIcon />}]
+    instruments: [{name: "violão", icon: <GuitarIcon />}, {name: "guitarra", icon: <GuitarIcon />}, {name: "teclado", icon: <GuitarIcon />}],
+    classification: "band"
   }
 ];

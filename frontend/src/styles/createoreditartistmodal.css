@@ -1,0 +1,81 @@
+.create-or-edit-artist-modal {
+  color: white !important;
+
+  .ant-modal-close-x {
+    color: white;
+  }
+
+  .ant-modal-title {
+    background-color: rgb(24, 24, 24);
+    color: white !important;
+  }
+
+  .ant-modal-content {
+    background-color: rgb(24, 24, 24);
+
+    label {
+      color: white !important;
+    }
+  }
+
+
+  input,
+  .ant-select-selector {
+    background-color: transparent !important;
+    color: white !important;
+    border-color: #353535FF !important;
+  }
+
+  input::placeholder,
+  .ant-select-selection-placeholder {
+    color: rgb(100, 100, 100);
+  }
+
+
+  .ant-select-selection-item {
+    color: white !important;
+  }
+
+  .ant-form-item-label {
+    color: white !important;
+  }
+
+  .ant-steps-item-icon {
+    background-color: #c08fff !important;
+    border-color: #c08fff !important;
+
+    svg {
+      color: white;
+    }
+  }
+
+  .ant-steps-item-title {
+    color: white !important;
+  }
+
+  .ant-steps-item-title::after {
+    background-color: #c08fff !important;
+  }
+
+  .back-button:hover {
+    color: #c08fff !important;
+    border-color: #c08fff !important;
+  }
+}
+
+.ant-select-dropdown {
+  background-color: #353535FF !important;
+}
+
+.ant-select-item-option-content,
+.ant-select-arrow {
+  color: white !important;
+}
+
+.ant-select-item-option-selected {
+  background-color: rgb(29, 29, 29) !important;
+}
+
+input::placeholder {
+  color: rgb(100, 100, 100) !important;
+}
