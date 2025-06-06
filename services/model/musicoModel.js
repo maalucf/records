@@ -33,9 +33,9 @@ class Musico extends Model {
 Musico.init(
   {
     nro_registro: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
+      type: DataTypes.INTEGER,
       primaryKey: true,
+      autoIncrement: true,
     },
     id_artista: {
       type: DataTypes.INTEGER,

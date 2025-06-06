@@ -11,13 +11,9 @@ const router = Router();
 router.post("/musicos", async (req, res) => {
   const dadosMusico = req.body;
 
-  if (
-    !dadosMusico.nome ||
-    !dadosMusico.nro_registro ||
-    !dadosMusico.localizacao
-  ) {
+  if (!dadosMusico.nome || !dadosMusico.localizacao) {
     return res.status(400).json({
-      message: "Campos obrigatórios: nome, nro_registro, localizacao.",
+      message: "Campos obrigatórios: nome, localizacao.",
     });
   }
 

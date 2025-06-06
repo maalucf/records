@@ -9,7 +9,7 @@ class MusicoPertenceBanda extends Model {
 MusicoPertenceBanda.init(
   {
     nro_registro: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       references: { model: "musico", key: "nro_registro" },

@@ -27,9 +27,9 @@ async function createOrFindMusico(dadosMusico) {
     return existente;
   }
 
-  if (!nome || !nro_registro || !localizacao) {
+  if (!nome || !localizacao) {
     throw new Error(
-      "Para criar novo músico, informe { nome, nro_registro, localizacao }."
+      "Para criar novo músico, informe { nome, localizacao }."
     );
   }
 
@@ -38,7 +38,6 @@ async function createOrFindMusico(dadosMusico) {
   const artista = await createArtista({ nome, generos_musicais, url_imagem });
 
   const musico = await artista.createMusico({
-    nro_registro,
     id_localizacao: locInst.id_localizacao,
   });
 
