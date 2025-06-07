@@ -2,6 +2,7 @@
 
 import AlbumCard from "@/components/AlbumsSection/AlbumCard";
 import CreateOrEditArtistModal from "@/components/CreateOrEditArtistModal";
+import { getArtist } from "@/services/artists";
 import { albums } from "@/util/albums";
 import { artists } from "@/util/artists";
 import { Col, Row } from "antd";
@@ -16,12 +17,27 @@ export default function ArtistPage() {
   const artistAlbums = albums?.filter((album) => album?.artist_id === currentArtist?.id)
   const [showEditArtistModal, setShowEditArtistModal] = useState(false)
   const [isAnAdminUser, setIsAnAdminUser] = useState(false)
+
+  useEffect(() => {
+    getArtistValues()
+  }, [])
   
   useEffect(() => {
     if(localStorage?.getItem("isAnAdminUser")) {
       setIsAnAdminUser(true)
     }
   }, [])
+
+  async function getArtistValues() {
+    try {
+      if (id) {
+        const data = await getArtist(id[0])
+        console.log(data, 'data!!!')
+      }
+    } catch(error) {
+      console.log(error)
+    }
+  }
 
 
   return (

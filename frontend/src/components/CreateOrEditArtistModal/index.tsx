@@ -11,7 +11,7 @@ const { Option } = Select
 
 interface ICreateOrEditArtistModal {
   setVisible: (value: boolean) => void
-  setRefetchQuery: (value: boolean) => void
+  setRefetchQuery?: (value: boolean) => void
   artist?: IArtist
 }
 export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, artist}:ICreateOrEditArtistModal) {
@@ -214,7 +214,9 @@ export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, ar
           }
         }
 
-        setRefetchQuery(true)
+        if (setRefetchQuery) {
+          setRefetchQuery(true)
+        }
         
         setTimeout(() => {
           artistForm?.resetFields()

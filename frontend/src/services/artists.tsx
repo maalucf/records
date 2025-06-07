@@ -15,6 +15,20 @@ export const getArtists = async () => {
   }
 };
 
+export const getArtist = async (id_artista: string) => {
+  try {
+    const { data } = await axios.get(
+      `http://localhost:5000/artistas/${id_artista}`,
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+    return data;
+  } catch (err: unknown) {
+    if (isAxiosError(err)) {
+      throw new Error(err.response?.data?.message || err.message);
+    }
+  }
+};
+
 export const createMusician = async (dadosMusico: any) => {
   try {
     const { data } = await axios.post(
