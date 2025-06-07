@@ -1,4 +1,4 @@
-import { literal,Op } from "sequelize";
+import { literal, Op } from "sequelize";
 
 import db from "../model/index.js";
 const {
@@ -30,21 +30,6 @@ async function getArtistas() {
         ],
       },
     ],
-    where: {
-      [Op.or]: [
-        { "$bandas.cod_banda$": { [Op.not]: null } },
-
-        literal(`
-          "musicos"."nro_registro" IS NOT NULL
-          AND NOT EXISTS (
-            SELECT 1
-              FROM musico_pertence_banda AS mpb
-             WHERE mpb.nro_registro = "musicos"."nro_registro"
-          )
-        `),
-      ],
-    },
-    distinct: true,
   });
 
   return artistas.map((a) => a.get({ plain: true }));
@@ -118,12 +103,16 @@ async function deleteArtista(id_artista) {
   });
 
   if (qtdDeletados === 0) {
-    throw new Error(
-      `Artista com id_artista="${id_artista}" não encontrado.`
-    );
+    throw new Error(`Artista com id_artista="${id_artista}" não encontrado.`);
   }
 
   return true;
 }
 
-export { createArtista, deleteArtista, getArtistaById, getArtistas, getDiscosByIdArtista };
+export {
+  createArtista,
+  deleteArtista,
+  getArtistaById,
+  getArtistas,
+  getDiscosByIdArtista,
+};
