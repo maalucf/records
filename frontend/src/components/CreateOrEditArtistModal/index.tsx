@@ -1,34 +1,39 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { Button, Col, Form, Input, Modal, Row, Select, Steps } from "antd";
 import { useEffect, useState } from "react";
 import { useMessageFunctions } from "../Message";
 import { IArtist } from "@/types/sectionTypes";
+import { createBand, createMusician } from "@/services/artists";
 
 const { Option } = Select
 
 interface ICreateOrEditArtistModal {
   setVisible: (value: boolean) => void
+  setRefetchQuery: (value: boolean) => void
   artist?: IArtist
 }
-export default function CreateOrEditArtistModal({setVisible, artist}:ICreateOrEditArtistModal) {
+export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, artist}:ICreateOrEditArtistModal) {
   const [artistForm] = Form.useForm()
   const [currentStep, setCurrentStep] = useState(0);
-  const {messageError, contextHolder} = useMessageFunctions()
+  const {messageError, messageSuccess,  contextHolder} = useMessageFunctions()
+  const [musicianOrBand, setMusicianOrBand] = useState(artist?.classification || '')
 
   useEffect(() => {
     if(artist?.id) {
       artistForm?.setFieldsValue({
-        name: artist?.name,
-        age: artist?.generalInfo?.age,
-        music_style: artist?.generalInfo?.music_style,
-        location: artist?.generalInfo?.location,
-        image_url: artist?.thumb,
-        instruments: artist?.instruments?.map((a) => a?.name)?.join(', '),
-        classification: artist?.classification
+        nome: artist?.name,
+        generos_musicais: artist?.generalInfo?.music_style,
+        endereco: artist?.generalInfo?.location,
+        // telefone: artist?.generalInfo?.telefone,
+        url_imagem: artist?.thumb,
+        instrumentos: artist?.instruments?.map((a) => a?.name)?.join(', '),
+        classificacao: artist?.classification
       })
     }
   }, [])
+
 
   const next = () => {
     setCurrentStep(currentStep + 1);
@@ -39,7 +44,7 @@ export default function CreateOrEditArtistModal({setVisible, artist}:ICreateOrEd
   };
 
   const requiredValidator = (fieldLabel: string) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     return async (_: any, value: any) => {
       if (value === undefined || value === null || String(value).trim() === "") {
         messageError(`Preencha o campo ${fieldLabel}`);
@@ -49,6 +54,10 @@ export default function CreateOrEditArtistModal({setVisible, artist}:ICreateOrEd
     };
   };
 
+  function handleChangeClassification(value: string) {
+    setMusicianOrBand(value)
+  }
+
 
   const steps = [
     {
@@ -57,7 +66,7 @@ export default function CreateOrEditArtistModal({setVisible, artist}:ICreateOrEd
         <Row gutter={[8, 8]}>
           <Col span={24}>
             <Form.Item
-              name="name"
+              name="nome"
               label="Nome"
               style={{ width: "100%" }}
               rules={[{required: true},  {validator: requiredValidator("Nome") }]}
@@ -68,9 +77,9 @@ export default function CreateOrEditArtistModal({setVisible, artist}:ICreateOrEd
 
           <Col span={12}>
             <Form.Item
-              name="music_style"
-              label="Estilo Musical"
-              rules={[{required: true},  {validator: requiredValidator("Estilo Musical") }]}
+              name="generos_musicais"
+              label="Gêneros Musicais"
+              rules={[{required: true},  {validator: requiredValidator("Gêneros Musicais") }]}
             >
               <Input />
             </Form.Item>
@@ -78,7 +87,7 @@ export default function CreateOrEditArtistModal({setVisible, artist}:ICreateOrEd
 
           <Col span={12}>
             <Form.Item
-              name="phone"
+              name="telefone"
               label="Telefone"
               rules={[{required: true},  {validator: requiredValidator("Telefone") }]}
             >
@@ -88,7 +97,7 @@ export default function CreateOrEditArtistModal({setVisible, artist}:ICreateOrEd
 
           <Col span={24}>
             <Form.Item
-              name="location"
+              name="endereco"
               label="Endereço"
               rules={[{required: true},  {validator: requiredValidator("Endereço") }]}
             >
@@ -98,7 +107,7 @@ export default function CreateOrEditArtistModal({setVisible, artist}:ICreateOrEd
 
           <Col span={24}>
             <Form.Item
-              name="image_url"
+              name="url_imagem"
               label="URL de imagem"
               rules={[{required: true},  {validator: requiredValidator("URL de imagem") }]}
             >
@@ -114,11 +123,11 @@ export default function CreateOrEditArtistModal({setVisible, artist}:ICreateOrEd
         <Row gutter={[8, 8]}>
           <Col span={24}>
             <Form.Item
-              name="classification"
+              name="classificacao"
               label="Classificação"
               rules={[{required: true},  {validator: requiredValidator("Classificação") }]}
             >
-              <Select placeholder="Selecione a classificação">
+              <Select placeholder="Selecione a classificação" onChange={handleChangeClassification}>
                 <Option key="1" value="musician">
                   Músico
                 </Option>
@@ -132,12 +141,28 @@ export default function CreateOrEditArtistModal({setVisible, artist}:ICreateOrEd
       ),
     },
     {
-      title: "Instrumentos tocados",
-      content: (
+      title: musicianOrBand === 'band' ? "Integrantes" : "Instrumentos tocados",
+      content: musicianOrBand === 'band' ? (
         <Row gutter={[8, 8]}>
           <Col span={24}>
             <Form.Item
-              name="instruments"
+              name="musicos"
+              label="Músicos"
+              rules={[{required: true},  {validator: requiredValidator("Integrantes") }]}
+            >
+              <Select placeholder="Selecione os integrantes" mode="multiple">
+                <Option value="1">Artista 1</Option>
+                <Option value="2">Artista 2</Option>
+                <Option value="3">Artista 3</Option>
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+      ) : (
+        <Row gutter={[8, 8]}>
+          <Col span={24}>
+            <Form.Item
+              name="instrumentos"
               label="Instrumentos"
               rules={[{required: true},  {validator: requiredValidator("Instrumentos") }]}
             >
@@ -151,15 +176,63 @@ export default function CreateOrEditArtistModal({setVisible, artist}:ICreateOrEd
 
   async function handleCreateNewArtist() {
     try {
-      const allValues = await artistForm.validateFields();
-      console.log("Todos os valores válidos:", allValues);
+      const validated = await artistForm.validateFields();
+
+      if (validated) {
+        if (validated?.classificacao === 'band') {
+          const formattedMusicians = validated?.musicos?.map((nro_musico: string) => {
+            return {nro_registro: nro_musico}
+          })
+          const data = await createBand({
+            nome: validated?.nome,
+            url_imagem: validated?.url_imagem,
+            generos_musicais: validated?.generos_musicais,
+            musicos: formattedMusicians
+          })
+
+          if (data) {
+            messageSuccess("Banda criada com sucesso")
+            
+          }
+        } else {
+          const formattedInstruments = validated?.instrumentos?.split(",")?.map((instrumento: any) => {
+            return {nome: instrumento}
+          })
+          const data = await createMusician({
+            nome: validated?.nome,
+            localizacao: {
+              telefone: validated?.telefone,
+              endereco: validated?.endereco
+            },
+            url_imagem: validated?.url_imagem,
+            generos_musicais: validated?.generos_musicais,
+            instrumentos: formattedInstruments
+          })
+
+          if (data) {
+            messageSuccess("Músico criado com sucesso")
+          }
+        }
+
+        setRefetchQuery(true)
+        
+        setTimeout(() => {
+          artistForm?.resetFields()
+          setVisible(false)
+        }, 1000)
+      }
     } catch (err) {
       console.log(err)
     }
   }
 
   async function handleEditNewArtist() {
-    
+    try {
+      const allValues = await artistForm.validateFields();
+      console.log("Todos os valores válidos:", allValues);
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   

@@ -10,8 +10,10 @@ export default function ArtistCard({artist}: IArtistCard) {
   const [hoverImage, setHoverImage] = useState(false)
   const router = useRouter()
 
+  console.log(artist, 'artist!')
+
   function handleClickArtist() {
-    router.push(`/artists/${artist?.id}`)
+    router.push(`/artists/${artist?.id_artista}`)
   }
 
   return (
@@ -19,16 +21,13 @@ export default function ArtistCard({artist}: IArtistCard) {
       <div className="artist-card">
         <Row justify={"center"} style={{textAlign: 'center'}}>
           <Col span={24} >
-            <Image className={`artist-thumb ${hoverImage ? 'hovered' : ''}`} onMouseEnter={() => setHoverImage(true)} onMouseLeave={() => setHoverImage(false)} src={artist?.thumb} alt="" height={200} width={200}/>
+            <Image className={`artist-thumb ${hoverImage ? 'hovered' : ''}`} onMouseEnter={() => setHoverImage(true)} onMouseLeave={() => setHoverImage(false)} src={artist?.url_imagem} alt="" height={200} width={200}/>
           </Col>
           <Col span={24}>
-            <p style={{fontWeight: 600, textTransform: 'capitalize'}}>{artist?.name}</p>
+            <p style={{fontWeight: 600, textTransform: 'capitalize'}}>{artist?.nome}</p>
           </Col>
           <Col span={24} style={{textTransform: 'capitalize'}}>
-            <p>{artist?.musicGender}</p>
-          </Col>
-          <Col span={24}>
-            <p>{`${artist?.albuns} Álbuns lançados`}</p>
+            <p>{artist?.generos_musicais}</p>
           </Col>
         </Row>
       </div>

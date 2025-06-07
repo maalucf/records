@@ -2,11 +2,10 @@ import { JSX } from "react"
 
 export interface IArtistCard {
   artist: {
-    id: number
-    name: string
-    thumb: string
-    musicGender: string
-    albuns: string
+    id_artista: number
+    nome: string
+    url_imagem: string
+    generos_musicais: string
   }
 }
 

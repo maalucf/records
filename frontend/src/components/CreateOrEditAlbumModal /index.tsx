@@ -238,7 +238,13 @@ export default function CreateOrEditAlbumModal({setVisible, album}:ICreateOrEdit
   }
 
   async function handleEditAlbum() {
-    
+    try {
+      console.log(albumForm?.getFieldsValue())
+      const allValues = await albumForm.validateFields();
+      console.log("Todos os valores válidos:", allValues);
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   
