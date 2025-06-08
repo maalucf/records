@@ -61,7 +61,7 @@ async function getArtistaById(id_artista) {
               {
                 model: Artista,
                 as: "artista",
-                attributes: ["nome"],
+                attributes: ["nome", "url_imagem"],
               },
             ],
             through: { attributes: [] },
@@ -103,6 +103,7 @@ async function getArtistaById(id_artista) {
     artista.banda.musicos = artista.banda.musicos.map((m) => ({
       id_artista: m.id_artista,
       nome: m.artista.nome,
+      url_imagem: m.artista.url_imagem,
     }));
   } else {
     artista.musico.bandas = artista.musico.bandas.map((b) => ({
