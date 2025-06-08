@@ -17,12 +17,12 @@ async function getArtistas() {
     include: [
       {
         model: Banda,
-        as: "bandas",
+        as: "banda",
         required: false, // LEFT JOIN banda
       },
       {
         model: Musico,
-        as: "musicos",
+        as: "musico",
         required: false, // LEFT JOIN musico
         include: [
           { model: Instrumento, as: "instrumentos", required: false },
@@ -30,6 +30,21 @@ async function getArtistas() {
         ],
       },
     ],
+    where: {
+      [Op.or]: [
+        { "$banda.cod_banda$": { [Op.not]: null } },
+
+        literal(`
+          "musico"."nro_registro" IS NOT NULL
+          AND NOT EXISTS (
+            SELECT 1
+              FROM musico_pertence_banda AS mpb
+             WHERE mpb.nro_registro = "musico"."nro_registro"
+          )
+        `),
+      ],
+    },
+    distinct: true,
   });
 
   return artistas.map((a) => a.get({ plain: true }));
@@ -41,11 +56,11 @@ async function getArtistaById(id_artista) {
     include: [
       {
         model: Banda,
-        as: "bandas",
+        as: "banda",
       },
       {
         model: Musico,
-        as: "musicos",
+        as: "musico",
         include: [
           {
             model: Instrumento,

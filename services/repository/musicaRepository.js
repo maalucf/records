@@ -23,6 +23,16 @@ async function findOrCreateMusica(dadosMusica) {
     throw new Error("Para criar nova música, informe { titulo }.");
   }
 
+  if (titulo) {
+    const existente = await Musica.findOne({
+      where: { titulo },
+      include: [{ model: Artista, as: "artistas" }],
+    });
+    if (existente) {
+      return existente;
+    }
+  }
+
   const nova = await Musica.create({ titulo, duracao });
 
   if (Array.isArray(artistas) && artistas.length > 0) {

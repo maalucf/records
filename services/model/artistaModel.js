@@ -4,14 +4,14 @@ import { pgSequelize } from "../database/db.js";
 
 class Artista extends Model {
   static associate(models) {
-    Artista.hasMany(models.Musico, {
+    Artista.hasOne(models.Musico, {
       foreignKey: "id_artista",
-      as: "musicos",
+      as: "musico",
     });
 
-    Artista.hasMany(models.Banda, {
+    Artista.hasOne(models.Banda, {
       foreignKey: "id_artista",
-      as: "bandas",
+      as: "banda",
     });
 
     Artista.hasMany(models.Disco, {
