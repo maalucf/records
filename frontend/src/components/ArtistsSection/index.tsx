@@ -32,13 +32,13 @@ export default function ArtistsSection() {
   }, [refetchQuery])
 
   async function getAllArtists() {
-      try {
-        const data = await getArtists()
-        setAllArtists(data)
-      } catch (error) {
-        console.log(error)
-      }
+    try {
+      const data = await getArtists()
+      setAllArtists(data)
+    } catch (error) {
+      console.log(error)
     }
+  }
   
 
   

@@ -29,6 +29,20 @@ export const getArtist = async (id_artista: string) => {
   }
 };
 
+export const getAlbums = async () => {
+  try {
+    const { data } = await axios.get(
+      'http://localhost:5000/discos',
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+    return data;
+  } catch (err: unknown) {
+    if (isAxiosError(err)) {
+      throw new Error(err.response?.data?.message || err.message);
+    }
+  }
+};
+
 export const createMusician = async (dadosMusico: any) => {
   try {
     const { data } = await axios.post(
@@ -49,6 +63,21 @@ export const createBand = async (dadosBanda: any) => {
     const { data } = await axios.post(
       'http://localhost:5000/bandas',
       dadosBanda,
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+    return data;
+  } catch (err: unknown) {
+    if (isAxiosError(err)) {
+      throw new Error(err.response?.data?.message || err.message);
+    }
+  }
+};
+
+export const createDisco = async (dadosDisco: any) => {
+  try {
+    const { data } = await axios.post(
+      'http://localhost:5000/discos',
+      dadosDisco,
       { headers: { 'Content-Type': 'application/json' } }
     );
     return data;

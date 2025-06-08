@@ -4,12 +4,20 @@ import { createOrFindProdutor } from "./produtorRepository.js";
 const { Artista, Disco, Musica, Produtor } = db;
 
 async function getDiscos() {
-  return await Disco.findAll({
+  const discos = await Disco.findAll({
     include: [
       { model: Musica, as: "musicas" },
       { model: Produtor, as: "produtor" },
+      { model: Artista, as: "artista", attributes: ["nome"]}
     ],
   });
+
+  const plain = discos.map(d => d.get({ plain: true }));
+
+  return plain.map(({ artista, ...rest }) => ({
+    ...rest,
+    nome_artista: artista.nome
+  }));
 }
 
 async function getDiscoById(cod_disco) {

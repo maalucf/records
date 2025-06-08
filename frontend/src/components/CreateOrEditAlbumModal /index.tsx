@@ -1,22 +1,42 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { Button, Col, Form, Input, InputNumber, Modal, Row, Select, Steps } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMessageFunctions } from "../Message";
 import { IArtist } from "@/types/sectionTypes";
 import { MdOutlineAdd, MdOutlineRemoveCircleOutline } from "react-icons/md";
+import { createDisco, getArtists } from "@/services/artists";
 
 const { Option } = Select
 
 interface ICreateOrEditAlbumModall {
   setVisible: (value: boolean) => void
+  setRefetchQuery?: (value: boolean) => void
+
   album?: IArtist
 }
-export default function CreateOrEditAlbumModal({setVisible, album}:ICreateOrEditAlbumModall) {
+export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQuery}:ICreateOrEditAlbumModall) {
   const [albumForm] = Form.useForm()
   const [currentStep, setCurrentStep] = useState(0);
-  const {messageError, contextHolder} = useMessageFunctions()
+  const {messageError, messageSuccess, contextHolder} = useMessageFunctions()
+  const [availableArtists, setAvailableArtists] = useState([] as any[])
   console.log(album)
+
+  useEffect(() => {
+    getAvailableArtists()
+  }, [])
+
+  async function getAvailableArtists() {
+    try {
+      const data = await getArtists()
+      setAvailableArtists(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  console.log(availableArtists, 'availableArtists!!!')
 
   // useEffect(() => {
   //   if(artist?.id) {
@@ -41,7 +61,7 @@ export default function CreateOrEditAlbumModal({setVisible, album}:ICreateOrEdit
   };
 
   const requiredValidator = (fieldLabel: string) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     return async (_: any, value: any) => {
       if (value === undefined || value === null || String(value).trim() === "") {
         messageError(`Preencha o campo ${fieldLabel}`);
@@ -59,8 +79,8 @@ export default function CreateOrEditAlbumModal({setVisible, album}:ICreateOrEdit
         <Row gutter={[8, 8]}>
           <Col span={24}>
             <Form.Item
-              name="name"
-              label="Nome"
+              name="titulo"
+              label="Titulo"
               style={{ width: "100%" }}
               rules={[{required: true},  {validator: requiredValidator("Nome") }]}
             >
@@ -70,7 +90,7 @@ export default function CreateOrEditAlbumModal({setVisible, album}:ICreateOrEdit
 
           <Col span={12}>
             <Form.Item
-              name="release_date"
+              name="data"
               label="Data de lançamento"
               rules={[{required: true},  {validator: requiredValidator("Data de lançamento") }]}
             >
@@ -80,7 +100,7 @@ export default function CreateOrEditAlbumModal({setVisible, album}:ICreateOrEdit
 
           <Col span={12}>
             <Form.Item
-              name="format"
+              name="formato"
               label="Formato"
               rules={[{required: true},  {validator: requiredValidator("Formato") }]}
             >
@@ -90,7 +110,7 @@ export default function CreateOrEditAlbumModal({setVisible, album}:ICreateOrEdit
 
           <Col span={24}>
             <Form.Item
-              name="image_url"
+              name="url_imagem"
               label="URL de imagem"
               rules={[{required: true},  {validator: requiredValidator("URL de imagem") }]}
             >
@@ -106,7 +126,7 @@ export default function CreateOrEditAlbumModal({setVisible, album}:ICreateOrEdit
         <Row gutter={[8, 8]}>
           <Col span={24}>
             <Form.Item
-              name="producer"
+              name="produtor"
               label="Produtor"
               rules={[{required: true},  {validator: requiredValidator("Produtor") }]}
             >
@@ -119,7 +139,7 @@ export default function CreateOrEditAlbumModal({setVisible, album}:ICreateOrEdit
     {
       title: "Músicas",
       content: (
-        <Form.List name="musics">
+        <Form.List name="musicas">
           {(fields, { add, remove }) => (
             <>
               {fields.map(({ key, name, ...restField }, index) => (
@@ -137,7 +157,7 @@ export default function CreateOrEditAlbumModal({setVisible, album}:ICreateOrEdit
                   <Col span={8}>
                     <Form.Item
                       {...restField}
-                      name={[name, "title"]}
+                      name={[name, "titulo"]}
                       label={index === 0 ? "Título" : " "}
                       rules={[
                         {
@@ -154,7 +174,7 @@ export default function CreateOrEditAlbumModal({setVisible, album}:ICreateOrEdit
                   <Col span={6}>
                     <Form.Item
                       {...restField}
-                      name={[name, "duration"]}
+                      name={[name, "duracao"]}
                       label={index === 0 ? "Duração (minutos)" : " "}
                       rules={[
                         {
@@ -180,7 +200,7 @@ export default function CreateOrEditAlbumModal({setVisible, album}:ICreateOrEdit
                   <Col span={8}>
                     <Form.Item
                       {...restField}
-                      name={[name, "artists"]}
+                      name={[name, "artistas"]}
                       label={index === 0 ? "Artistas" : " "}
                       rules={[
                         {
@@ -191,9 +211,13 @@ export default function CreateOrEditAlbumModal({setVisible, album}:ICreateOrEdit
                       ]}
                     >
                       <Select placeholder="Selecione artistas" mode="multiple">
-                        <Option value="1">Artista 1</Option>
-                        <Option value="2">Artista 2</Option>
-                        <Option value="3">Artista 3</Option>
+                        {availableArtists?.map((artist) => {
+                          return (
+                            <Option key={artist?.id_artista} value={artist?.id_artista}>
+                              {artist?.nome}
+                            </Option>
+                          )
+                        })}
                       </Select>
                     </Form.Item>
                   </Col>
@@ -227,13 +251,55 @@ export default function CreateOrEditAlbumModal({setVisible, album}:ICreateOrEdit
     }
   ];
 
+  // {
+  //   "titulo": "Coletânea Sem Criação de Artista",
+  //   "formato": "CD",
+  //   "data": "2025-06-14",
+  //   "id_artista": 2,
+  //   "produtor": { "nome": "Judith"},
+  //   "url_imagem": "http://exemplo.com/capa.png",
+  //   "musicas": [
+  //     { "cod_musica": 2 },
+  //     {
+  //       "titulo": "Musica",
+  //       "duracao": 210,
+  //       "artistas": [
+  //         { "id_artista": 5 }
+  //       ]
+  //     }
+  //   ]
+  // }
+  
+
+  
+
   async function handleCreateNewAlbum() {
-    try {
-      console.log(albumForm?.getFieldsValue())
-      const allValues = await albumForm.validateFields();
-      console.log("Todos os valores válidos:", allValues);
-    } catch (err) {
-      console.log(err)
+    const validated = await albumForm.validateFields();
+    if (validated) {
+      const musicasComObjetos = validated.musicas.map((m: any) => ({
+        ...m,
+        duracao: m.duracao*60000,
+        artistas: m.artistas.map((id: number) => ({ id_artista: id })),
+      }));
+      
+      const payload = { ...validated, produtor: {name: validated?.produtor}, musicas: musicasComObjetos };
+      try {
+        const data = await createDisco(payload)
+        if (data) {
+          messageSuccess("Álbum criado com sucesso")
+        }
+
+        if (setRefetchQuery) {
+          setRefetchQuery(true)
+        }
+        
+        setTimeout(() => {
+          albumForm?.resetFields()
+          setVisible(false)
+        }, 1000)
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 

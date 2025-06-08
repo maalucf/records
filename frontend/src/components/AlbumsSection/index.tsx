@@ -2,16 +2,43 @@
 
 import { Col, Row } from "antd";
 import AlbumCard from "./AlbumCard";
-import { albums } from "@/util/albums";
 import { useEffect, useRef, useState } from "react";
 import CreateOrEditAlbumModal from "../CreateOrEditAlbumModal ";
 import { MdOutlineAdd } from "react-icons/md";
+import { getAlbums } from "@/services/artists";
 
 export default function AlbunsSection() {
   const [visible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement | null>(null);
   const [showNewAlbumModal, setShowNewAlbumModal] = useState(false)
   const [isAnAdminUser, setIsAnAdminUser] = useState(false)
+  const [refetchQuery, setRefetchQuery] = useState(false)
+  const [allAlbums, setAllAlbums] = useState([])
+
+  useEffect(() => {
+      setRefetchQuery(true)
+      if(localStorage?.getItem("isAnAdminUser")) {
+        setIsAnAdminUser(true)
+      }
+    }, [])
+  
+  
+    useEffect(() => {
+      if(refetchQuery) {
+        getAllAlbums()
+        setRefetchQuery(false)
+      }
+    }, [refetchQuery])
+  
+    async function getAllAlbums() {
+      try {
+        const data = await getAlbums()
+        setAllAlbums(data)
+        console.log(allAlbums, "allAlbums!!!")
+      } catch (error) {
+        console.log(error)
+      }
+    }
 
   useEffect(() => {
     if(localStorage?.getItem("isAnAdminUser")) {
@@ -41,7 +68,7 @@ export default function AlbunsSection() {
   return (
     <>
     {showNewAlbumModal && (
-            <CreateOrEditAlbumModal setVisible={setShowNewAlbumModal}/>
+            <CreateOrEditAlbumModal setVisible={setShowNewAlbumModal} setRefetchQuery={setRefetchQuery}/>
           )}
     <section className="albums-section" ref={sectionRef}>
       <div className={`albums-section-internal ${visible ? "visible" : ""}`}>
@@ -53,7 +80,7 @@ export default function AlbunsSection() {
             )}
           </Row>
           <Row style={{ marginTop: 10 }} gutter={[16, 16]}>
-            {albums?.map((album, index) => (
+            {allAlbums?.map((album, index) => (
               <Col span={4} key={index}>
                 <AlbumCard album={album} />
               </Col>
