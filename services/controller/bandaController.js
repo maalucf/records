@@ -2,7 +2,6 @@ import { Router } from "express";
 
 import {
   createBandaComMusicos,
-  getBandaMusicos,
   updateBandaComMusicos,
 } from "../repository/bandaRepository.js";
 import throwError from "./errors/error.js";
@@ -28,33 +27,13 @@ router.post("/bandas", async (req, res) => {
   }
 });
 
-router.get("/bandas/:cod_banda/musicos", async (req, res) => {
-  const codBanda = req.params.cod_banda;
-  try {
-    const bandaMusicos = await getBandaMusicos(codBanda);
-
-    if (!bandaMusicos) {
-      return res.status(404).json({
-        message: `Banda com cod_banda=${codBanda} não encontrada.`,
-      });
-    }
-
-    return res.status(200).json(bandaMusicos);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      message: `Erro ao buscar músicos da banda com cod_banda=${codBanda}.`,
-    });
-  }
-});
-
-router.put("/bandas/:cod_banda", async (req, res) => {
-  const { cod_banda } = req.params;
+router.put("/bandas/:id_artista", async (req, res) => {
+  const { id_artista } = req.params;
   const dados = req.body;
 
   try {
     const bandaAtualizada = await updateBandaComMusicos(
-      Number(cod_banda),
+      Number(id_artista),
       dados
     );
     return res.status(200).json({

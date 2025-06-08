@@ -40,28 +40,7 @@ async function createBandaComMusicos(dados) {
   return banda;
 }
 
-async function getBandaMusicos(cod_banda) {
-  const banda = await db.Banda.findByPk(cod_banda, {
-    include: [
-      {
-        model: Musico,
-        as: "musicos",
-        include: [
-          { model: Artista, as: "artista" },
-          { model: Instrumento, as: "instrumentos" },
-        ],
-      },
-    ],
-  });
-
-  if (!banda) {
-    throw new Error(`Banda com cod_banda=${cod_banda} não encontrada.`);
-  }
-
-  return banda;
-}
-
-async function updateBandaComMusicos(cod_banda, dados) {
+async function updateBandaComMusicos(id_artista, dados) {
   const {
     generos_musicais = null,
     musicos = [],
@@ -70,11 +49,14 @@ async function updateBandaComMusicos(cod_banda, dados) {
   } = dados;
 
   // Busca a Banda
-  const banda = await Banda.findByPk(cod_banda, {
-    include: [{ model: Artista, as: "artista" }],
-  });
+  const banda = await Banda.findOne(
+    { where: { id_artista } },
+    {
+      include: [{ model: Artista, as: "artista" }],
+    }
+  );
   if (!banda) {
-    throw new Error(`Banda com cod_banda=${cod_banda} não encontrada.`);
+    throw new Error(`Banda com id_artista=${id_artista} não encontrada.`);
   }
 
   // Atualiza o Artista
@@ -124,4 +106,4 @@ async function updateBandaComMusicos(cod_banda, dados) {
   return banda;
 }
 
-export { createBandaComMusicos, getBandaMusicos, updateBandaComMusicos };
+export { createBandaComMusicos, updateBandaComMusicos };

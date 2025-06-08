@@ -6,27 +6,53 @@ const { Artista, Disco, Musica, Produtor } = db;
 async function getDiscos() {
   const discos = await Disco.findAll({
     include: [
-      { model: Musica, as: "musicas" },
+      { model: Artista, as: "artista", attributes: ["nome"] },
+      {
+        model: Musica,
+        as: "musicas",
+        through: { attributes: [] },
+      },
       { model: Produtor, as: "produtor" },
-      { model: Artista, as: "artista", attributes: ["nome"]}
     ],
   });
 
-  const plain = discos.map(d => d.get({ plain: true }));
+  const plain = discos.map((d) => d.get({ plain: true }));
 
   return plain.map(({ artista, ...rest }) => ({
+    nome_artista: artista.nome,
     ...rest,
-    nome_artista: artista.nome
   }));
 }
 
 async function getDiscoById(cod_disco) {
-  return await Disco.findByPk(cod_disco, {
+  const disco = await Disco.findByPk(cod_disco, {
     include: [
-      { model: Musica, as: "musicas" },
+      { model: Artista, as: "artista", attributes: ["nome"] },
+      {
+        model: Musica,
+        as: "musicas",
+        through: { attributes: [] },
+        include: [
+          {
+            model: Artista,
+            as: "artistas",
+            attributes: ["id_artista", "nome"],
+            through: { attributes: [] },
+          },
+        ],
+      },
       { model: Produtor, as: "produtor" },
     ],
   });
+
+  const plain = disco ? disco.get({ plain: true }) : null;
+
+  const { artista, ...rest } = plain;
+
+  return {
+    nome_artista: artista.nome,
+    ...rest,
+  };
 }
 
 async function createDiscoComMusicas(dadosDisco) {

@@ -29,18 +29,18 @@ router.post("/musicos", async (req, res) => {
   }
 });
 
-router.put("/musicos/:nro_registro", async (req, res) => {
-  const { nro_registro } = req.params;
+router.put("/musicos/:id_artista", async (req, res) => {
+  const { id_artista } = req.params;
   const dadosMusico = req.body;
 
-  if (!nro_registro || !dadosMusico) {
+  if (!id_artista || !dadosMusico) {
     return res.status(400).json({
-      message: "Campos obrigatórios: nro_registro e dados do músico.",
+      message: "Campos obrigatórios: id_artista e dados do músico.",
     });
   }
 
   try {
-    const musicoAtualizado = await updateMusico(nro_registro, dadosMusico);
+    const musicoAtualizado = await updateMusico(id_artista, dadosMusico);
 
     return res.status(200).json({
       message: "Músico atualizado com sucesso.",

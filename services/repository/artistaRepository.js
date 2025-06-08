@@ -24,10 +24,6 @@ async function getArtistas() {
         model: Musico,
         as: "musico",
         required: false, // LEFT JOIN musico
-        include: [
-          { model: Instrumento, as: "instrumentos", required: false },
-          { model: Localizacao, as: "localizacao", required: false },
-        ],
       },
     ],
     where: {
@@ -51,34 +47,80 @@ async function getArtistas() {
 }
 
 async function getArtistaById(id_artista) {
-  return await Artista.findOne({
-    where: { id_artista },
+  const artistaModel = await Artista.findByPk(id_artista, {
     include: [
       {
         model: Banda,
         as: "banda",
+        include: [
+          {
+            model: Musico,
+            as: "musicos",
+            attributes: ["id_artista"],
+            include: [
+              {
+                model: Artista,
+                as: "artista",
+                attributes: ["nome"],
+              },
+            ],
+            through: { attributes: [] },
+          },
+        ],
       },
       {
         model: Musico,
         as: "musico",
         include: [
+          { model: Instrumento, as: "instrumentos" },
+          { model: Localizacao, as: "localizacao" },
           {
-            model: Instrumento,
-            as: "instrumentos",
-          },
-          {
-            model: Localizacao,
-            as: "localizacao",
+            model: Banda,
+            as: "bandas",
+            required: false,
+            attributes: ["id_artista"],
+            include: [
+              {
+                model: Artista,
+                as: "artista",
+                attributes: ["nome"],
+              },
+            ],
+            through: { attributes: [] },
           },
         ],
       },
     ],
   });
+
+  if (!artistaModel) {
+    return null;
+  }
+
+  const artista = artistaModel.get({ plain: true });
+
+  if (artista.banda) {
+    artista.banda.musicos = artista.banda.musicos.map((m) => ({
+      id_artista: m.id_artista,
+      nome: m.artista.nome,
+    }));
+  } else {
+    artista.musico.bandas = artista.musico.bandas.map((b) => ({
+      id_artista: b.id_artista,
+      nome: b.artista.nome,
+    }));
+
+    artista.musico.instrumentos = artista.musico.instrumentos.map((i) => ({
+      cod_instrumento: i.cod_instrumento,
+      nome: i.nome,
+    }));
+  }
+
+  return artista;
 }
 
 async function getDiscosByIdArtista(id_artista) {
-  return await Artista.findAll({
-    where: { id_artista },
+  return Artista.findByPk(id_artista, {
     include: [
       {
         model: Disco,
@@ -87,6 +129,7 @@ async function getDiscosByIdArtista(id_artista) {
           {
             model: Musica,
             as: "musicas",
+            through: { attributes: [] },
           },
           {
             model: Produtor,

@@ -28,9 +28,7 @@ async function createOrFindMusico(dadosMusico) {
   }
 
   if (!nome || !localizacao) {
-    throw new Error(
-      "Para criar novo músico, informe { nome, localizacao }."
-    );
+    throw new Error("Para criar novo músico, informe { nome, localizacao }.");
   }
 
   const locInst = await createOrFindLocalizacao(localizacao);
@@ -57,26 +55,27 @@ async function createOrFindMusico(dadosMusico) {
   return musico;
 }
 
-async function updateMusico(nro_registro, dadosMusico) {
+async function updateMusico(id_artista, dadosMusico) {
   const { generos_musicais, instrumentos, localizacao, nome, url_imagem } =
     dadosMusico;
 
-  if (!nro_registro) {
-    throw new Error("Para atualizar, informe { nro_registro } do músico.");
+  if (!id_artista) {
+    throw new Error("Para atualizar, informe { id_artista } do músico.");
   }
 
   // Busca o Músico
-  const musico = await Musico.findByPk(nro_registro, {
-    include: [
-      { model: Instrumento, as: "instrumentos" },
-      { model: Localizacao, as: "localizacao" },
-      { model: Artista, as: "artista" },
-    ],
-  });
+  const musico = await Musico.findOne(
+    { where: { id_artista } },
+    {
+      include: [
+        { model: Instrumento, as: "instrumentos" },
+        { model: Localizacao, as: "localizacao" },
+        { model: Artista, as: "artista" },
+      ],
+    }
+  );
   if (!musico) {
-    throw new Error(
-      `Músico com nro_registro="${nro_registro}" não encontrado.`
-    );
+    throw new Error(`Músico com id_artista="${id_artista}" não encontrado.`);
   }
 
   // Atualiza o Artista
