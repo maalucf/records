@@ -131,6 +131,14 @@ async function getDiscosByIdArtista(id_artista) {
             model: Musica,
             as: "musicas",
             through: { attributes: [] },
+            include: [
+              {
+                model: Artista,
+                as: "artistas",
+                attributes: ["id_artista", "nome"],
+                through: { attributes: [] },
+              },
+            ],
           },
           {
             model: Produtor,
