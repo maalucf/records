@@ -174,9 +174,9 @@ async function updateDiscoComMusicas(cod_disco, dadosDisco) {
     const instanciasMusicas = [];
     for (const umaMusica of musicas) {
       const instancia = await findOrCreateMusica(umaMusica);
-      instanciasMusicas.push(instancia);
-
       await instancia.addArtista(id_artista);
+      
+      instanciasMusicas.push(instancia);
     }
     await disco.setMusicas(instanciasMusicas);
   }
