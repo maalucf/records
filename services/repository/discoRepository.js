@@ -1,5 +1,5 @@
 import db from "../model/index.js";
-import { findOrCreateMusica } from "./musicaRepository.js";
+import { findOrCreateMusica, updateMusica } from "./musicaRepository.js";
 import { createOrFindProdutor } from "./produtorRepository.js";
 const { Artista, Disco, Musica, Produtor } = db;
 
@@ -173,9 +173,9 @@ async function updateDiscoComMusicas(cod_disco, dadosDisco) {
   if (Array.isArray(musicas)) {
     const instanciasMusicas = [];
     for (const umaMusica of musicas) {
-      const instancia = await findOrCreateMusica(umaMusica);
+      const instancia = await updateMusica(umaMusica);
       await instancia.addArtista(id_artista);
-      
+
       instanciasMusicas.push(instancia);
     }
     await disco.setMusicas(instanciasMusicas);

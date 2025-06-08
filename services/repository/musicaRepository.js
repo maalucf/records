@@ -65,4 +65,64 @@ async function findOrCreateMusica(dadosMusica) {
   return nova;
 }
 
-export { findOrCreateMusica };
+async function updateMusica(dadosMusica) {
+  const { cod_musica, titulo, duracao, artistas = [] } = dadosMusica || {};
+
+  let musica;
+  if (cod_musica) {
+    musica = await Musica.findByPk(cod_musica, {
+      include: [{ model: Artista, as: "artistas" }],
+    });
+  } else if (titulo) {
+    musica = await Musica.findOne({
+      where: { titulo },
+      include: [{ model: Artista, as: "artistas" }],
+    });
+  }
+
+  if (!musica) {
+    throw new Error(`Música com título=${titulo} não encontrada.`);
+  }
+
+  const camposParaAtualizar = {};
+  if (titulo != null) camposParaAtualizar.titulo = titulo;
+  if (duracao != null) camposParaAtualizar.duracao = duracao;
+
+  if (Object.keys(camposParaAtualizar).length > 0) {
+    await musica.update(camposParaAtualizar);
+  }
+
+  if (artistas !== undefined) {
+    console.log("Dados dos artistas:", artistas);
+    if (!Array.isArray(artistas)) {
+      throw new Error(
+        "O campo artistas deve ser um array de objetos { id_artista }."
+      );
+    }
+
+    const instanciasArtistas = [];
+    for (const dadoArt of artistas) {
+      const { id_artista } = dadoArt;
+      if (!id_artista) {
+        throw new Error(
+          "Em cada objeto de artistas, informe sempre { id_artista }."
+        );
+      }
+      const art = await Artista.findByPk(id_artista);
+      if (!art) {
+        throw new Error(`Artista com id_artista=${id_artista} não encontrado.`);
+      }
+      instanciasArtistas.push(art);
+    }
+
+    await musica.setArtistas(instanciasArtistas);
+  }
+
+  await musica.reload({
+    include: [{ model: Artista, as: "artistas" }],
+  });
+
+  return musica;
+}
+
+export { findOrCreateMusica, updateMusica };
