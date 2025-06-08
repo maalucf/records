@@ -4,7 +4,7 @@
 import { Button, Col, Form, Input, Modal, Radio, Row, Select, Steps } from "antd";
 import { useEffect, useState } from "react";
 import { useMessageFunctions } from "../Message";
-import { createBand, createMusician, updateBand, updateMusician } from "@/services/artists";
+import { createBand, createMusician, getArtists, updateBand, updateMusician } from "@/services/artists";
 import { CheckboxGroupProps } from "antd/es/checkbox";
 
 const { Option } = Select
@@ -19,6 +19,7 @@ export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, ar
   const [currentStep, setCurrentStep] = useState(0);
   const {messageError, messageSuccess,  contextHolder} = useMessageFunctions()
   const [musicianOrBand, setMusicianOrBand] = useState(artist?.classificacao || 'musician')
+  const [availableArtists, setAvailableArtists] = useState([] as any[])
 
   useEffect(() => {
     if(artist?.id_artista) {
@@ -44,6 +45,19 @@ export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, ar
       }
     }
   }, [])
+
+  useEffect(() => {
+      getAvailableArtists()
+    }, [])
+  
+  async function getAvailableArtists() {
+    try {
+      const data = await getArtists()
+      setAvailableArtists(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
 
   const next = () => {
@@ -82,11 +96,11 @@ export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, ar
               label="Classificação"
               style={{ width: "100%" }}
               rules={[{required: true},  {validator: requiredValidator("Classificação") }]}
+              initialValue={'musician'}
             >
               <Radio.Group
                 block
                 options={options}
-                defaultValue="musician"
                 optionType="button"
                 buttonStyle="solid"
                 onChange={(e) => setMusicianOrBand(e.target.value)}
@@ -161,9 +175,13 @@ export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, ar
               rules={[{required: true},  {validator: requiredValidator("Integrantes") }]}
             >
               <Select placeholder="Selecione os integrantes" mode="multiple">
-                <Option value="1">Artista 1</Option>
-                <Option value="2">Artista 2</Option>
-                <Option value="3">Artista 3</Option>
+                {availableArtists?.filter((a) => !a.banda)?.map((artist) => {
+                  return (
+                    <Option key={artist?.id_artista} value={artist?.id_artista}>
+                      {artist?.nome}
+                    </Option>
+                  )
+                })}
               </Select>
             </Form.Item>
           </Col>

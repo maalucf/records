@@ -232,7 +232,7 @@ export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQue
                     >
                       <Select placeholder="Selecione feats" mode="multiple" allowClear>
                         
-                        {availableArtists?.filter((a) => a.id_artista !== albumForm?.getFieldValue("id_artista"))?.map((artist) => {
+                        {availableArtists?.filter((a) => !a.banda && a.id_artista !== albumForm?.getFieldValue("id_artista"))?.map((artist) => {
                           return (
                             <Option key={artist?.id_artista} value={artist?.id_artista}>
                               {artist?.nome}
