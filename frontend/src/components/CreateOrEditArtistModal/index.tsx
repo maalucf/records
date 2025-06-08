@@ -94,7 +94,7 @@ export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, ar
             <Form.Item
               name="classificacao"
               label="Classificação"
-              style={{ width: "100%" }}
+              style={{ width: "100%", display: artist?.id_artista ? 'none' : '' }}
               rules={[{required: true},  {validator: requiredValidator("Classificação") }]}
               initialValue={'musician'}
             >

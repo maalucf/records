@@ -168,7 +168,7 @@ export default function ArtistPage() {
                           return (
                             <Col span={4} key={index}>
                               <div className="instrument-show">
-                                {mapInstrumentIcons[instrument?.nome?.toLowerCase()]}
+                                {mapInstrumentIcons[instrument?.nome?.trim()?.toLowerCase()]}
                                 <h2>
                                   {instrument?.nome}
                                 </h2>
