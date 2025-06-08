@@ -34,7 +34,6 @@ export default function AlbunsSection() {
       try {
         const data = await getAlbums()
         setAllAlbums(data)
-        console.log(allAlbums, "allAlbums!!!")
       } catch (error) {
         console.log(error)
       }

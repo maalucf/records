@@ -10,8 +10,6 @@ export default function ArtistCard({artist}: IArtistCard) {
   const [hoverImage, setHoverImage] = useState(false)
   const router = useRouter()
 
-  console.log(artist, 'artist!')
-
   function handleClickArtist() {
     router.push(`/artists/${artist?.id_artista}`)
   }

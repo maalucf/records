@@ -20,7 +20,6 @@ export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQue
   const [currentStep, setCurrentStep] = useState(0);
   const {messageError, messageSuccess, contextHolder} = useMessageFunctions()
   const [availableArtists, setAvailableArtists] = useState([] as any[])
-  console.log(album)
 
   useEffect(() => {
     if(album?.cod_disco) {
@@ -308,7 +307,6 @@ export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQue
 
   async function handleEditAlbum() {
     const validated = await albumForm.validateFields();
-    console.log(validated, '??')
 
     if (validated) {
       const musicasComObjetos = validated.musicas.map((m: any) => ({
@@ -321,7 +319,6 @@ export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQue
       
       const payload = { ...validated, produtor: {nome: validated?.produtor}, musicas: musicasComObjetos };
 
-      console.log(payload, 'payload???')
       try {
         const data = await updateDisco(album?.cod_disco, payload)
         if (data) {

@@ -14,8 +14,6 @@ export default function AlbumCard({album}: any) {
     router.push(`/albums/${album?.cod_disco}`)
   }
 
-  console.log(album, 'album???')
-
   return (
     <Card style={{backgroundColor: 'transparent', border: 'none', width: 250, height: 350}} onMouseEnter={() => setIsFlipped(true)} onMouseLeave={() => setIsFlipped(false)} onClick={handleClickAlbum}>
         <div className="album-card-container">

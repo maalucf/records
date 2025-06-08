@@ -22,7 +22,7 @@ export default function HeaderMenu() {
   function redirectToLocal(key: string) {
     setActiveKey(key)
     router.push(key)
-  } 
+  }
 
   const isAdminLoginPage = useMemo(() => {
     return pathname === '/admin/login'
@@ -43,6 +43,7 @@ export default function HeaderMenu() {
               items={items}
               style={{ flex: 1, minWidth: 320 }}
               onClick={(option) => redirectToLocal(option?.key)}
+              selectedKeys={[activeKey]} 
             />
           </div>
         )}

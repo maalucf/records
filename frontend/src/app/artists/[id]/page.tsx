@@ -77,7 +77,6 @@ export default function ArtistPage() {
     try {
       if (id) {
         const data = await getArtistAlbums(id?.toString())
-        console.log(data, 'data!!!')
         setArtistAlbums(data?.discos)
       }
     } catch(error) {

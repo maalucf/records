@@ -206,8 +206,6 @@ export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, ar
     try {
       const validated = await artistForm.validateFields();
 
-      console.log(validated, 'validated???')
-
       if (validated) {
         if (validated?.classificacao === 'band') {
           const formattedMusicians = validated?.musicos?.map((nro_musico: string) => {
@@ -291,8 +289,6 @@ export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, ar
             generos_musicais: validated?.generos_musicais,
             instrumentos: formattedInstruments
           })
-
-          console.log(data, 'data???')
 
           if (data) {
             messageSuccess("Músico atualizado com sucesso")
