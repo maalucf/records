@@ -50,8 +50,8 @@ async function updateBandaComMusicos(id_artista, dados) {
 
   // Busca a Banda
   const banda = await Banda.findOne(
-    { where: { id_artista } },
-    {
+    { 
+      where: { id_artista },
       include: [{ model: Artista, as: "artista" }],
     }
   );

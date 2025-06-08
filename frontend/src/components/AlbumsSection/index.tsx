@@ -80,7 +80,7 @@ export default function AlbunsSection() {
             )}
           </Row>
           <Row style={{ marginTop: 10 }} gutter={[16, 16]}>
-            {allAlbums?.map((album, index) => (
+            {allAlbums?.slice(0,18)?.map((album, index) => (
               <Col span={4} key={index}>
                 <AlbumCard album={album} />
               </Col>

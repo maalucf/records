@@ -4,9 +4,8 @@
 import { Button, Col, Form, Input, InputNumber, Modal, Row, Select, Steps } from "antd";
 import { useEffect, useState } from "react";
 import { useMessageFunctions } from "../Message";
-import { IArtist } from "@/types/sectionTypes";
 import { MdOutlineAdd, MdOutlineRemoveCircleOutline } from "react-icons/md";
-import { createDisco, getArtists } from "@/services/artists";
+import { createDisco, getArtists, updateDisco } from "@/services/artists";
 
 const { Option } = Select
 
@@ -14,7 +13,7 @@ interface ICreateOrEditAlbumModall {
   setVisible: (value: boolean) => void
   setRefetchQuery?: (value: boolean) => void
 
-  album?: IArtist
+  album?: any
 }
 export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQuery}:ICreateOrEditAlbumModall) {
   const [albumForm] = Form.useForm()
@@ -23,6 +22,25 @@ export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQue
   const [availableArtists, setAvailableArtists] = useState([] as any[])
   console.log(album)
 
+  useEffect(() => {
+    if(album?.cod_disco) {
+      const initialMusicas = album.musicas.map((m: any) => ({
+        titulo: m.titulo,
+        duracao: (m.duracao / 60000).toFixed(2),            // se quiser exibir em minutos
+        artistas: m.artistas.filter((a: any) => a.id_artista !== album?.id_artista)?.map((a: any) => a.id_artista),
+      }));
+
+      albumForm.setFieldsValue({
+        id_artista: album.id_artista,
+        titulo:     album.titulo,
+        data:       album.data,
+        formato:    album.formato,
+        produtor:   album.produtor.nome,
+        url_imagem: album.url_imagem,
+        musicas:    initialMusicas,  
+      });
+    }
+  }, [])
   useEffect(() => {
     getAvailableArtists()
   }, [])
@@ -36,21 +54,6 @@ export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQue
     }
   }
 
-  console.log(availableArtists, 'availableArtists!!!')
-
-  // useEffect(() => {
-  //   if(artist?.id) {
-  //     albumForm?.setFieldsValue({
-  //       name: artist?.name,
-  //       age: artist?.generalInfo?.age,
-  //       music_style: artist?.generalInfo?.music_style,
-  //       location: artist?.generalInfo?.location,
-  //       image_url: artist?.thumb,
-  //       instruments: artist?.instruments?.map((a) => a?.name)?.join(', '),
-  //       classification: artist?.classification
-  //     })
-  //   }
-  // }, [])
 
   const next = () => {
     setCurrentStep(currentStep + 1);
@@ -77,7 +80,7 @@ export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQue
       title: "Informações básicas",
       content: (
         <Row gutter={[8, 8]}>
-          <Col span={24}>
+          <Col span={12}>
             <Form.Item
               name="titulo"
               label="Titulo"
@@ -85,6 +88,30 @@ export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQue
               rules={[{required: true},  {validator: requiredValidator("Nome") }]}
             >
               <Input />
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item
+              name="id_artista"
+              label="Artista"
+              rules={[
+                {
+                  validator: requiredValidator(
+                    `Artista`
+                  ),
+                },
+              ]}
+            >
+              <Select placeholder="Selecione o artista">
+                {availableArtists?.map((artist) => {
+                  return (
+                    <Option key={artist?.id_artista} value={artist?.id_artista}>
+                      {artist?.nome}
+                    </Option>
+                  )
+                })}
+              </Select>
             </Form.Item>
           </Col>
 
@@ -201,17 +228,11 @@ export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQue
                     <Form.Item
                       {...restField}
                       name={[name, "artistas"]}
-                      label={index === 0 ? "Artistas" : " "}
-                      rules={[
-                        {
-                          validator: requiredValidator(
-                            `Artistas (Música ${index + 1})`
-                          ),
-                        },
-                      ]}
+                      label={index === 0 ? "Feat." : " "}
                     >
-                      <Select placeholder="Selecione artistas" mode="multiple">
-                        {availableArtists?.map((artist) => {
+                      <Select placeholder="Selecione feats" mode="multiple" allowClear>
+                        
+                        {availableArtists?.filter((a) => a.id_artista !== albumForm?.getFieldValue("id_artista"))?.map((artist) => {
                           return (
                             <Option key={artist?.id_artista} value={artist?.id_artista}>
                               {artist?.nome}
@@ -250,39 +271,21 @@ export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQue
       ),
     }
   ];
-
-  // {
-  //   "titulo": "Coletânea Sem Criação de Artista",
-  //   "formato": "CD",
-  //   "data": "2025-06-14",
-  //   "id_artista": 2,
-  //   "produtor": { "nome": "Judith"},
-  //   "url_imagem": "http://exemplo.com/capa.png",
-  //   "musicas": [
-  //     { "cod_musica": 2 },
-  //     {
-  //       "titulo": "Musica",
-  //       "duracao": 210,
-  //       "artistas": [
-  //         { "id_artista": 5 }
-  //       ]
-  //     }
-  //   ]
-  // }
-  
-
   
 
   async function handleCreateNewAlbum() {
     const validated = await albumForm.validateFields();
+
     if (validated) {
       const musicasComObjetos = validated.musicas.map((m: any) => ({
         ...m,
-        duracao: m.duracao*60000,
-        artistas: m.artistas.map((id: number) => ({ id_artista: id })),
+        duracao: m.duracao * 60000,
+        artistas: Array.isArray(m.artistas)
+          ? m.artistas.map((id: number) => ({ id_artista: id }))
+          : [],  
       }));
       
-      const payload = { ...validated, produtor: {name: validated?.produtor}, musicas: musicasComObjetos };
+      const payload = { ...validated, produtor: {nome: validated?.produtor}, musicas: musicasComObjetos };
       try {
         const data = await createDisco(payload)
         if (data) {
@@ -304,12 +307,38 @@ export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQue
   }
 
   async function handleEditAlbum() {
-    try {
-      console.log(albumForm?.getFieldsValue())
-      const allValues = await albumForm.validateFields();
-      console.log("Todos os valores válidos:", allValues);
-    } catch (err) {
-      console.log(err)
+    const validated = await albumForm.validateFields();
+    console.log(validated, '??')
+
+    if (validated) {
+      const musicasComObjetos = validated.musicas.map((m: any) => ({
+        ...m,
+        duracao: m.duracao * 60000,
+        artistas: Array.isArray(m.artistas)
+          ? m.artistas.map((id: number) => ({ id_artista: id }))
+          : [],    
+      }));
+      
+      const payload = { ...validated, produtor: {nome: validated?.produtor}, musicas: musicasComObjetos };
+
+      console.log(payload, 'payload???')
+      try {
+        const data = await updateDisco(album?.cod_disco, payload)
+        if (data) {
+          messageSuccess("Álbum atualizado com sucesso")
+        }
+
+        if (setRefetchQuery) {
+          setRefetchQuery(true)
+        }
+        
+        setTimeout(() => {
+          albumForm?.resetFields()
+          setVisible(false)
+        }, 1000)
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 
@@ -318,7 +347,7 @@ export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQue
     <>
     {contextHolder}
     <Modal
-        title={album?.id ? `Editar Álbum` : `Adicionar Álbum`}
+        title={album?.cod_disco ? `Editar Álbum` : `Adicionar Álbum`}
         open
         onCancel={() => setVisible(false)}
         footer={null} 
@@ -359,7 +388,7 @@ export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQue
               <Button
                 type="primary"
                 style={{ backgroundColor: "#c08fff" }}
-                onClick={album?.id ? handleEditAlbum : handleCreateNewAlbum}
+                onClick={album?.cod_disco ? handleEditAlbum : handleCreateNewAlbum}
               >
                 Concluir
               </Button>

@@ -64,16 +64,15 @@ async function updateMusico(id_artista, dadosMusico) {
   }
 
   // Busca o Músico
-  const musico = await Musico.findOne(
-    { where: { id_artista } },
-    {
-      include: [
-        { model: Instrumento, as: "instrumentos" },
-        { model: Localizacao, as: "localizacao" },
-        { model: Artista, as: "artista" },
-      ],
-    }
-  );
+  const musico = await Musico.findOne({
+    where: { id_artista },
+    include: [
+      { model: Instrumento, as: "instrumentos" },
+      { model: Localizacao, as: "localizacao" },
+      { model: Artista,   as: "artista"   },
+    ],
+  });
+
   if (!musico) {
     throw new Error(`Músico com id_artista="${id_artista}" não encontrado.`);
   }

@@ -15,7 +15,7 @@ export default function Front({name, thumb, artist, year, qty_music}: IAlbumFron
         {artist}
       </Col>
       <Col span={24}>
-        {`${year} • ${qty_music} músicas`}
+        {`${year?.split('-')[0]} • ${qty_music} ${Number(qty_music) > 1 ? "músicas" : 'música'}`}
       </Col>
     </Row>
   )

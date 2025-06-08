@@ -1,36 +1,47 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { Button, Col, Form, Input, Modal, Row, Select, Steps } from "antd";
+import { Button, Col, Form, Input, Modal, Radio, Row, Select, Steps } from "antd";
 import { useEffect, useState } from "react";
 import { useMessageFunctions } from "../Message";
-import { IArtist } from "@/types/sectionTypes";
-import { createBand, createMusician } from "@/services/artists";
+import { createBand, createMusician, updateBand, updateMusician } from "@/services/artists";
+import { CheckboxGroupProps } from "antd/es/checkbox";
 
 const { Option } = Select
 
 interface ICreateOrEditArtistModal {
   setVisible: (value: boolean) => void
   setRefetchQuery?: (value: boolean) => void
-  artist?: IArtist
+  artist?: any
 }
 export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, artist}:ICreateOrEditArtistModal) {
   const [artistForm] = Form.useForm()
   const [currentStep, setCurrentStep] = useState(0);
   const {messageError, messageSuccess,  contextHolder} = useMessageFunctions()
-  const [musicianOrBand, setMusicianOrBand] = useState(artist?.classification || '')
+  const [musicianOrBand, setMusicianOrBand] = useState(artist?.classificacao || 'musician')
 
   useEffect(() => {
-    if(artist?.id) {
-      artistForm?.setFieldsValue({
-        nome: artist?.name,
-        generos_musicais: artist?.generalInfo?.music_style,
-        endereco: artist?.generalInfo?.location,
-        // telefone: artist?.generalInfo?.telefone,
-        url_imagem: artist?.thumb,
-        instrumentos: artist?.instruments?.map((a) => a?.name)?.join(', '),
-        classificacao: artist?.classification
-      })
+    if(artist?.id_artista) {
+      if (artist?.musico?.id_artista) {
+        artistForm?.setFieldsValue({
+          nome: artist?.nome,
+          generos_musicais: artist?.generos_musicais,
+          endereco: artist?.musico?.localizacao?.endereco,
+          telefone: artist?.musico?.localizacao?.telefone,
+          url_imagem: artist?.url_imagem,
+          instrumentos: artist?.musico?.instrumentos?.map((a: {cod_instrumento:number, nome: string}) => a?.nome)?.join(', '),
+          classificacao: 'musician'
+        })
+      } else {
+        artistForm?.setFieldsValue({
+          nome: artist?.nome,
+          generos_musicais: artist?.generos_musicais,
+          endereco: artist?.musico?.localizacao?.endereco,
+          telefone: artist?.musico?.localizacao?.telefone,
+          url_imagem: artist?.url_imagem,
+          classificacao: 'band'
+        })
+      }
     }
   }, [])
 
@@ -54,9 +65,10 @@ export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, ar
     };
   };
 
-  function handleChangeClassification(value: string) {
-    setMusicianOrBand(value)
-  }
+  const options: CheckboxGroupProps<string>['options'] = [
+    { label: 'Músico', value: 'musician' },
+    { label: 'Banda', value: 'band' },
+  ]
 
 
   const steps = [
@@ -64,6 +76,24 @@ export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, ar
       title: "Informações básicas",
       content: (
         <Row gutter={[8, 8]}>
+          <Col span={8}>
+            <Form.Item
+              name="classificacao"
+              label="Classificação"
+              style={{ width: "100%" }}
+              rules={[{required: true},  {validator: requiredValidator("Classificação") }]}
+            >
+              <Radio.Group
+                block
+                options={options}
+                defaultValue="musician"
+                optionType="button"
+                buttonStyle="solid"
+                onChange={(e) => setMusicianOrBand(e.target.value)}
+              />
+            </Form.Item>
+          </Col>
+          
           <Col span={24}>
             <Form.Item
               name="nome"
@@ -85,16 +115,17 @@ export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, ar
             </Form.Item>
           </Col>
 
-          <Col span={12}>
-            <Form.Item
-              name="telefone"
-              label="Telefone"
-              rules={[{required: true},  {validator: requiredValidator("Telefone") }]}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-
+        {musicianOrBand === 'musician' && (
+          <>
+            <Col span={12}>
+              <Form.Item
+                name="telefone"
+                label="Telefone"
+                rules={[{required: true},  {validator: requiredValidator("Telefone") }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
           <Col span={24}>
             <Form.Item
               name="endereco"
@@ -104,37 +135,16 @@ export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, ar
               <Input />
             </Form.Item>
           </Col>
+          </>
+        )}
 
-          <Col span={24}>
+          <Col span={musicianOrBand === 'musician' ? 24 : 12}>
             <Form.Item
               name="url_imagem"
               label="URL de imagem"
               rules={[{required: true},  {validator: requiredValidator("URL de imagem") }]}
             >
               <Input />
-            </Form.Item>
-          </Col>
-        </Row>
-      ),
-    },
-    {
-      title: "Classificação",
-      content: (
-        <Row gutter={[8, 8]}>
-          <Col span={24}>
-            <Form.Item
-              name="classificacao"
-              label="Classificação"
-              rules={[{required: true},  {validator: requiredValidator("Classificação") }]}
-            >
-              <Select placeholder="Selecione a classificação" onChange={handleChangeClassification}>
-                <Option key="1" value="musician">
-                  Músico
-                </Option>
-                <Option key="2" value="band">
-                  Banda
-                </Option>
-              </Select>
             </Form.Item>
           </Col>
         </Row>
@@ -177,6 +187,8 @@ export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, ar
   async function handleCreateNewArtist() {
     try {
       const validated = await artistForm.validateFields();
+
+      console.log(validated, 'validated???')
 
       if (validated) {
         if (validated?.classificacao === 'band') {
@@ -230,13 +242,58 @@ export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, ar
 
   async function handleEditNewArtist() {
     try {
-      const allValues = await artistForm.validateFields();
-      console.log("Todos os valores válidos:", allValues);
+      const validated = await artistForm.validateFields();
+      if (validated) {
+        if (validated?.classificacao === 'band') {
+          const formattedMusicians = validated?.musicos?.map((nro_musico: string) => {
+            return {nro_registro: nro_musico}
+          })
+          const data = await updateBand(artist?.id_artista, {
+            nome: validated?.nome,
+            url_imagem: validated?.url_imagem,
+            generos_musicais: validated?.generos_musicais,
+            musicos: formattedMusicians
+          })
+
+          if (data) {
+            messageSuccess("Banda atualizada com sucesso")
+            
+          }
+        } else {
+          const formattedInstruments = validated?.instrumentos?.split(",")?.map((instrumento: any) => {
+            return {nome: instrumento}
+          })
+          const data = await updateMusician(artist?.id_artista, {
+            nome: validated?.nome,
+            localizacao: {
+              telefone: validated?.telefone,
+              endereco: validated?.endereco
+            },
+            url_imagem: validated?.url_imagem,
+            generos_musicais: validated?.generos_musicais,
+            instrumentos: formattedInstruments
+          })
+
+          console.log(data, 'data???')
+
+          if (data) {
+            messageSuccess("Músico atualizado com sucesso")
+          }
+        }
+
+        if (setRefetchQuery) {
+          setRefetchQuery(true)
+        }
+        
+        setTimeout(() => {
+          artistForm?.resetFields()
+          setVisible(false)
+        }, 1000)
+      }
     } catch (err) {
       console.log(err)
     }
   }
-
   
   return (
     <>
@@ -248,6 +305,7 @@ export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, ar
         footer={null} 
         width={800}
         className="create-or-edit-artist-modal"
+        maskClosable={false}
       >
         <Steps current={currentStep} items={steps.map((it) => ({ key: it.title, title: it.title }))} />
 
@@ -257,9 +315,6 @@ export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, ar
           </div>
           <div style={{ display: currentStep === 1 ? "block" : "none" }}>
             {steps[1].content}
-          </div>
-          <div style={{ display: currentStep === 2 ? "block" : "none" }}>
-            {steps[2].content}
           </div>
 
           <div style={{ marginTop: 10, textAlign: "right" }}>
@@ -283,7 +338,7 @@ export default function CreateOrEditArtistModal({setVisible, setRefetchQuery, ar
               <Button
                 type="primary"
                 style={{ backgroundColor: "#c08fff" }}
-                onClick={artist?.id ? handleEditNewArtist : handleCreateNewArtist}
+                onClick={artist?.id_artista ? handleEditNewArtist : handleCreateNewArtist}
               >
                 Concluir
               </Button>

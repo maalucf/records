@@ -1,6 +1,33 @@
 .create-or-edit-artist-modal {
   color: white !important;
 
+  .ant-radio-button-checked,
+  .ant-radio-button-wrapper-checked {
+    border-radius: 10px;
+    background-color: #c08fffa9 !important;
+    border-color: #c08fffa9 !important;
+    color: white;
+
+    .ant-radio-button-label {
+      color: white;
+    }
+  }
+
+  .ant-radio-button-wrapper-checked::before,
+  .ant-radio-button-wrapper::before {
+    background-color: transparent !important;
+  }
+
+  .ant-radio-button-wrapper {
+    border-radius: 10px;
+    background-color: transparent !important;
+    border-color: #9c72d4a9 !important;
+  }
+
+  .ant-radio-button-label {
+    color: #9c72d4a9;
+  }
+
   .ant-modal-close-x {
     color: white;
   }
@@ -101,7 +128,8 @@
 }
 
 .ant-select-item-option-content,
-.ant-select-arrow {
+.ant-select-arrow,
+.ant-select-selection-item-remove {
   color: white !important;
 }
 
@@ -111,4 +139,8 @@
 
 input::placeholder {
   color: rgb(100, 100, 100) !important;
+}
+
+.ant-select-item-option-state {
+  color: #c08fff !important;
 }

@@ -5,7 +5,7 @@
 
   .header {
     border-bottom: 1px solid #353535FF;
-    background: linear-gradient(#353535FF, rgb(24, 24, 24));
+
     color: white;
     padding: 15px;
     border-top-right-radius: 10px;
@@ -26,7 +26,7 @@
       }
 
       .name {
-        font-size: 96px;
+        font-size: 80px;
         text-transform: capitalize;
       }
 
@@ -147,6 +147,54 @@
         overflow-y: auto;
       }
     }
+
+    .musicians {
+      .musician-photo {
+        border-radius: 100%;
+        margin-bottom: 10px;
+        box-shadow: 1px 1px 5px black
+      }
+    }
+
+    .musicians:hover {
+      text-decoration: underline;
+      cursor: pointer;
+      ;
+
+      .musician-photo {
+        scale: 1.2;
+      }
+    }
+
+    .band-name:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+}
+
+.ant-popover-inner {
+  background-color: rgb(24, 24, 24) !important;
+
+  .ant-popconfirm-title,
+  .ant-popconfirm-description {
+    color: white !important;
   }
 
+  .ant-popconfirm-buttons {
+    .ant-btn-default {
+      background-color: transparent !important;
+      border-color: rgba(255, 255, 255, 0.288);
+      color: white;
+    }
+
+    .ant-btn-default:hover {
+      border-color: #c08fff;
+      color: #c08fff;
+    }
+  }
+}
+
+.ant-popover-arrow:before {
+  background-color: rgb(24, 24, 24) !important;
 }

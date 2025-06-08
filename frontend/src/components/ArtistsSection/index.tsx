@@ -78,7 +78,7 @@ export default function ArtistsSection() {
           )}
         </Row>
         <Row style={{marginTop: 10}} gutter={[16,16]}>
-          {allArtists?.map((artist, index) => {
+          {allArtists?.slice(0,12)?.map((artist, index) => {
             return (
               <Col span={4} key={index}>
                 <ArtistCard artist={artist} />

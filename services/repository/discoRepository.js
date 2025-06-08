@@ -6,7 +6,7 @@ const { Artista, Disco, Musica, Produtor } = db;
 async function getDiscos() {
   const discos = await Disco.findAll({
     include: [
-      { model: Artista, as: "artista", attributes: ["nome"] },
+      { model: Artista, as: "artista", attributes: ["id_artista", "nome"] },
       {
         model: Musica,
         as: "musicas",
@@ -26,16 +26,32 @@ async function getDiscos() {
 
   const plain = discos.map((d) => d.get({ plain: true }));
 
-  return plain.map(({ artista, ...rest }) => ({
-    nome_artista: artista.nome,
-    ...rest,
-  }));
+  return plain.map(({ artista, musicas, ...rest }) => {
+    const mainId = artista.id_artista;
+
+    const sortedMusicas = musicas.map((m) => ({
+      ...m,
+      artistas: (m.artistas )
+        .slice()
+        .sort((a, b) => {
+          if (a.id_artista === mainId) return -1;
+          if (b.id_artista === mainId) return 1;
+          return 0;
+        }),
+    }));
+
+    return {
+      nome_artista: artista.nome,
+      ...rest,
+      musicas: sortedMusicas,
+    };
+  });
 }
 
 async function getDiscoById(cod_disco) {
   const disco = await Disco.findByPk(cod_disco, {
     include: [
-      { model: Artista, as: "artista", attributes: ["nome"] },
+      { model: Artista, as: "artista", attributes: ["id_artista", "nome"] },
       {
         model: Musica,
         as: "musicas",
@@ -53,13 +69,26 @@ async function getDiscoById(cod_disco) {
     ],
   });
 
-  const plain = disco ? disco.get({ plain: true }) : null;
+  const plain = disco.get({ plain: true });
+  const { artista, musicas, ...rest } = plain;
 
-  const { artista, ...rest } = plain;
+  const mainId = artista.id_artista;
+
+  const sortedMusicas = (musicas).map((m) => ({
+    ...m,
+    artistas: (m.artistas)
+      .slice() 
+      .sort((a, b) => {
+        if (a.id_artista === mainId) return -1; 
+        if (b.id_artista === mainId) return 1;  
+        return 0;                              
+      }),
+  }));
 
   return {
     nome_artista: artista.nome,
     ...rest,
+    musicas: sortedMusicas,
   };
 }
 
