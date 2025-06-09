@@ -81,7 +81,7 @@ async function updateMusica(dadosMusica) {
   }
 
   if (!musica) {
-    throw new Error(`Música com título=${titulo} não encontrada.`);
+    return await findOrCreateMusica(dadosMusica);
   }
 
   const camposParaAtualizar = {};
