@@ -347,8 +347,6 @@ export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQue
       
       const payload = { ...validated, produtor: {nome: validated?.produtor}, musicas: musicasComObjetos };
 
-      console.log(payload, 'payload')
-
       try {
         const data = await updateDisco(album?.cod_disco, payload)
         if (data) {

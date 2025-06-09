@@ -178,7 +178,7 @@ export default function AlbumPage() {
               </p>
             </Col>
             <Col span={24}>
-              <p className="name">
+              <div className="name">
                 {currentAlbum?.titulo}
                 {isAnAdminUser && (
                   <>
@@ -201,7 +201,7 @@ export default function AlbumPage() {
                     {currentAlbum?.nome_artista}
                   </span>
                 </Col>
-              </p>
+              </div>
             </Col>
           </Row>
         </Col>
