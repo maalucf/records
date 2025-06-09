@@ -31,13 +31,11 @@ async function getDiscos() {
 
     const sortedMusicas = musicas.map((m) => ({
       ...m,
-      artistas: (m.artistas )
-        .slice()
-        .sort((a, b) => {
-          if (a.id_artista === mainId) return -1;
-          if (b.id_artista === mainId) return 1;
-          return 0;
-        }),
+      artistas: m.artistas.slice().sort((a, b) => {
+        if (a.id_artista === mainId) return -1;
+        if (b.id_artista === mainId) return 1;
+        return 0;
+      }),
     }));
 
     return {
@@ -51,7 +49,11 @@ async function getDiscos() {
 async function getDiscoById(cod_disco) {
   const disco = await Disco.findByPk(cod_disco, {
     include: [
-      { model: Artista, as: "artista", attributes: ["id_artista", "nome"] },
+      {
+        model: Artista,
+        as: "artista",
+        attributes: ["id_artista", "nome", "url_imagem"],
+      },
       {
         model: Musica,
         as: "musicas",
@@ -74,19 +76,18 @@ async function getDiscoById(cod_disco) {
 
   const mainId = artista.id_artista;
 
-  const sortedMusicas = (musicas).map((m) => ({
+  const sortedMusicas = musicas.map((m) => ({
     ...m,
-    artistas: (m.artistas)
-      .slice() 
-      .sort((a, b) => {
-        if (a.id_artista === mainId) return -1; 
-        if (b.id_artista === mainId) return 1;  
-        return 0;                              
-      }),
+    artistas: m.artistas.slice().sort((a, b) => {
+      if (a.id_artista === mainId) return -1;
+      if (b.id_artista === mainId) return 1;
+      return 0;
+    }),
   }));
 
   return {
     nome_artista: artista.nome,
+    url_imagem_artista: artista.url_imagem,
     ...rest,
     musicas: sortedMusicas,
   };
