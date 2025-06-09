@@ -204,7 +204,6 @@ export default function ArtistPage() {
                         </Col>
                       )
                     })}
-                    
                   </Row> 
                 </>
               )}

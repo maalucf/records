@@ -129,6 +129,11 @@ export default function AlbumPage() {
       }
     }
 
+  function gotoArtistPage(id_artista: string) {
+    // currentAlbum?.artist_id
+    routes.push(`/artists/${id_artista}`)
+  }
+
 
   return currentAlbum?.cod_disco ? (
     <>
@@ -172,6 +177,12 @@ export default function AlbumPage() {
                     </Popconfirm>
                   </>
                 )}
+                <Col span={24} className="artist">
+                  <span onClick={() => gotoArtistPage(currentAlbum?.id_artista)} style={{display: 'flex', alignItems: 'center'}}>
+                    <Image src={currentAlbum?.url_imagem_artista} width={30} height={30} alt="album-photo" className="photo"/>
+                    {currentAlbum?.nome_artista}
+                  </span>
+                </Col>
               </p>
             </Col>
           </Row>
