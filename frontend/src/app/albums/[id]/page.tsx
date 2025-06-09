@@ -116,11 +116,17 @@ export default function AlbumPage() {
       dataIndex: 'duracao',
       width: 150,
       key: 'duracao',
-      render: (text: number) => {
+      render: (ms: number) => {
+        const totalSeconds = Math.floor(ms / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        const padded = seconds.toString().padStart(2, '0');
         return (
-          `${(text/60000).toFixed(2)} minutos`
+          <p style={{marginLeft: 20}}>
+            {`${minutes}:${padded}`}
+          </p>
         )
-      }
+      },
         
     }
   ];

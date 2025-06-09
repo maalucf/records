@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { Button, Col, Form, Input, InputNumber, Modal, Row, Select, Steps } from "antd";
+import { Button, Col, Form, Input, Modal, Row, Select, Steps } from "antd";
 import { useEffect, useState } from "react";
 import { useMessageFunctions } from "../Message";
 import { MdOutlineAdd, MdOutlineRemoveCircleOutline } from "react-icons/md";
@@ -23,11 +23,20 @@ export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQue
 
   useEffect(() => {
     if(album?.cod_disco) {
-      const initialMusicas = album.musicas.map((m: any) => ({
-        titulo: m.titulo,
-        duracao: (m.duracao / 60000).toFixed(2),            // se quiser exibir em minutos
-        artistas: m.artistas.filter((a: any) => a.id_artista !== album?.id_artista)?.map((a: any) => a.id_artista),
-      }));
+      const initialMusicas = album.musicas.map((m: any) => {
+        const totalSeconds = Math.floor(m.duracao / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        const secStr = seconds.toString().padStart(2, "0");
+    
+        return {
+          titulo: m.titulo,
+          duracao: `${minutes}:${secStr}`,                    // aqui!
+          artistas: m.artistas
+            .filter((a: any) => a.id_artista !== album.id_artista)
+            .map((a: any) => a.id_artista),
+        };
+      });
 
       albumForm.setFieldsValue({
         id_artista: album.id_artista,
@@ -201,24 +210,35 @@ export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQue
                     <Form.Item
                       {...restField}
                       name={[name, "duracao"]}
-                      label={index === 0 ? "Duração (minutos)" : " "}
+                      label={index === 0 ? "Duração (mm:ss)" : " "}
                       rules={[
+                        { validator: requiredValidator(
+                          `Duração (Música ${index + 1})`
+                        ) },
                         {
-                          validator: requiredValidator(
-                            `Duração (Música ${index + 1})`
-                          ),
+                          pattern: /^\d+:[0-5]\d$/,
+                          message: "Formato inválido — use minutos e segundos: “m:ss”",
                         },
                       ]}
+                      validateTrigger="onBlur"
+                      normalize={(value: string) => {
+                        if (!value) return value;
+                        const raw = value.replace(/\D/g, "");
+                        const digits = raw.length > 4 ? raw.slice(0, 4) : raw;
+                        if (digits.length <= 2) {
+                          const sec = digits.padStart(2, "0");
+                          return `0:${sec}`;
+                        }
+                        let min = digits.slice(0, digits.length - 2)
+                          .replace(/^0+/, "")
+                        if (!min) min = "0";
+                        const sec = digits.slice(-2);
+                        return `${min}:${sec}`;
+                      }}
                     >
-                      <InputNumber
-                        min={0}
-                        style={{
-                          width: "100%",
-                          backgroundColor: "transparent",
-                          borderColor: "#353535FF",
-                          color: "white",
-                        }}
-                        placeholder="Ex: 3"
+                      <Input
+                        placeholder="Ex: 4:08"
+                        style={{ width: "100%", backgroundColor: "transparent", borderColor: "#353535FF", color: "white" }}
                       />
                     </Form.Item>
                   </Col>
@@ -270,6 +290,14 @@ export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQue
       ),
     }
   ];
+
+  function parseDuration(durationStr: string): number {
+    const [minStr, secStr] = durationStr.split(':')
+    const minutes = parseInt(minStr, 10)
+    const seconds = parseInt(secStr, 10)
+    return (minutes * 60 + seconds) * 1000
+  }
+  
   
 
   async function handleCreateNewAlbum() {
@@ -278,7 +306,7 @@ export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQue
     if (validated) {
       const musicasComObjetos = validated.musicas.map((m: any) => ({
         ...m,
-        duracao: m.duracao * 60000,
+        duracao: parseDuration(m.duracao),
         artistas: Array.isArray(m.artistas)
           ? m.artistas.map((id: number) => ({ id_artista: id }))
           : [],  
@@ -311,13 +339,15 @@ export default function CreateOrEditAlbumModal({setVisible, album, setRefetchQue
     if (validated) {
       const musicasComObjetos = validated.musicas.map((m: any) => ({
         ...m,
-        duracao: m.duracao * 60000,
+        duracao: parseDuration(m.duracao),
         artistas: Array.isArray(m.artistas)
           ? m.artistas.map((id: number) => ({ id_artista: id }))
           : [],    
       }));
       
       const payload = { ...validated, produtor: {nome: validated?.produtor}, musicas: musicasComObjetos };
+
+      console.log(payload, 'payload')
 
       try {
         const data = await updateDisco(album?.cod_disco, payload)
