@@ -102,7 +102,6 @@ export default function ArtistPage() {
   }
 
   function gotoArtistPage(id_artista: string) {
-      // currentAlbum?.artist_id
       routes.push(`/artists/${id_artista}`)
     }
   
@@ -257,13 +256,20 @@ export default function ArtistPage() {
                 <Row>
                   <h1 style={{ color: "white" }}>ÁLBUNS</h1>
                 </Row>
-                <Row style={{ marginTop: 10 }} gutter={[16, 16]}>
-                  {artistAlbums?.map((album, index) => (
-                    <Col span={4} key={index}>
-                      <AlbumCard album={album} />
-                    </Col>
-                  ))}
-                </Row>
+                {artistAlbums?.length > 0 ? (
+                  <Row style={{ marginTop: 10 }} gutter={[16, 16]}>
+                    {artistAlbums?.map((album, index) => (
+                      <Col span={4} key={index}>
+                        <AlbumCard album={album} />
+                      </Col>
+                    ))}
+                  </Row>
+
+                ) : (
+                  <p style={{fontSize: 20, marginTop: 20}}>
+                    {'Esse artista ainda não possui álbuns vinculados'}
+                  </p>
+                )}
               </>
             )}
         </div>
