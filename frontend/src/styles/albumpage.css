@@ -82,3 +82,8 @@
   }
 
 }
+
+.artist-feat:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}

@@ -78,25 +78,38 @@ export default function AlbumPage() {
       title: 'Título',
       dataIndex: 'titulo',
       key: 'titulo',
-      render: (text: string, record: any) => {
+      render: (_: any, record: any) => {
+        const main = record.artistas[0]?.nome;
+        const feats = record.artistas.slice(1);
         return (
           <Row>
             <Col span={24}>
-              <Row justify="start" style={{fontSize: 16, fontWeight: 600}}>
-                {record?.titulo}
+              <Row justify="start" style={{ fontSize: 16, fontWeight: 600 }}>
+                {record.titulo}
               </Row>
-              <Row justify="start" style={{fontSize: 12, fontWeight: 400, opacity: 0.7}}>
-                {record?.artistas[0]?.nome}
+              <Row justify="start" style={{ fontSize: 12, fontWeight: 400, opacity: 0.7 }}>
+                {main}
               </Row>
-              {record?.artistas?.slice(1, record?.artistas?.length)?.length > 0 && (
-                <Row justify="start" style={{fontSize: 12, fontWeight: 400, opacity: 0.7}}>
-                  {`Feat: ${record?.artistas?.slice(1, record?.artistas?.length)?.map((a: {nome: string}) => a.nome)?.join(', ')}`}
+              {feats.length > 0 && (
+                <Row justify="start" style={{ fontSize: 12, fontWeight: 400, opacity: 0.7 }}>
+                  Feat:{' '}
+                  {feats.map((a: any, index: number) => (
+                    <span key={a.id_artista} className="artist-feat">
+                      <p
+                        onClick={() => gotoArtistPage(a?.id_artista)}
+                        style={{ padding: '0 4px' }}
+                      >
+                        {a.nome}
+                        {index < feats.length-1 && ','}
+                      </p>
+                    </span>
+                  ))}
                 </Row>
               )}
             </Col>
           </Row>
-        )
-      } 
+        );
+      },
     },
     {
       title: 'Duração',
@@ -168,7 +181,6 @@ export default function AlbumPage() {
                       title={`Remover álbum`}
                       description={`Tem certeza que deseja remover esse álbum?`}
                       onConfirm={handleDeleteAlbum}
-                      // onCancel={cancel}
                       okText="Excluir"
                       okButtonProps={{style: {backgroundColor: 'red'}}}
                       cancelText="Cancelar"
