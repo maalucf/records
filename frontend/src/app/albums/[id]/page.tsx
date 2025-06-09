@@ -174,7 +174,7 @@ export default function AlbumPage() {
           <Row>
             <Col span={24}>
               <p className="classification">
-                {"Álbum"}
+                {`Álbum produzido por: ${currentAlbum?.produtor?.nome}`}
               </p>
             </Col>
             <Col span={24}>
