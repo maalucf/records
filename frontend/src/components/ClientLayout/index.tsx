@@ -16,7 +16,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       </Content>
 
       <Footer style={{ textAlign: "center", backgroundColor: "black", color: "white", alignItems: 'end'}}>
-        DAMA ©{new Date().getFullYear()} Created by Daniel & Maria
+        DAMA ©{new Date().getFullYear()}
       </Footer>
     </Layout>
   );
